@@ -1,0 +1,22 @@
+#数据源配置
+spring:
+  datasource:
+    username: root
+    password: root
+    url: jdbc:mysql://localhost:3306/seckill?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+#Mybatis-plus配置
+mybatis-plus:
+  #配置Mapper.xml映射文件
+  mapper-locations: classpath*:/mapper/*Mapper.xml
+  #配置MyBatis数据返回类型别名（默认别名是类名）
+  type-aliases-package: com.zyd.seckill.pojo
+  configuration:
+    map-underscore-to-camel-case: false
+#MaBatis SQL打印（方法接口所在的包，不是Mapper.xml所在的包
+
+
+logging:
+  level:
+    com.jd.mapper: debug
