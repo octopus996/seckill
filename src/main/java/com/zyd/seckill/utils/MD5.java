@@ -29,7 +29,7 @@ public class MD5 {
      */
     public static String formPassToDBPass(String fromPass,String salt){
         String str=""+salt.charAt(0)+salt.charAt(2)+fromPass+salt.charAt(5)+salt.charAt(4);
-        return md5(salt);
+        return md5(str);
     }
 
     /**
@@ -47,10 +47,12 @@ public class MD5 {
     }
 
     public static void main(String[] args) {
-        String input = inputPassToFormPass("123456");
+        String input ="123456";
         String salt="1a2b3c4d";
-        System.out.println(input);
-        System.out.println(formPassToDBPass(input,salt));
+        String inputPass = inputPassToFormPass(input);
+
+        System.out.println(inputPass);
+        System.out.println(formPassToDBPass(inputPass,salt));
         System.out.println(inputPassToDBPass(input,salt));
     }
 }

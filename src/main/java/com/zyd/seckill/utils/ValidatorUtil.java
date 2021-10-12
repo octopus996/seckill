@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 public class ValidatorUtil {
     private static final Pattern mobile_pattern=Pattern.compile("^1[3|4|5|7|8][0-9]{9}$");
     public static boolean isMobile(String mobile){
+        //验证电话号码是否合格
         if(StringUtils.isEmpty(mobile)){
             return false;
         }

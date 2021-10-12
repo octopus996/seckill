@@ -32,14 +32,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public RespBean doLogin(LoginVo loginVo) {
         String mobile = loginVo.getMobile();
         String password = loginVo.getPassword();
-        if(StringUtils.isNotEmpty(mobile)||StringUtils.isNotEmpty(password)){
+        if(StringUtils.isBlank(mobile.trim()) || StringUtils.isBlank(password.trim())){
             //返回枚举类型
             return  RespBean.error(RespBeanEnum.LOGIN_ERROR);
         }
         if(!ValidatorUtil.isMobile(mobile)){
             return RespBean.error(RespBeanEnum.MOBILE_ERROR);
         }
-        User user = userMapper.selectById(mobile);
+        User user = userMapper.selectById(mobile.trim());
         if(null==user.getId()){
             return RespBean.error(RespBeanEnum.LOGIN_ERROR);
         }

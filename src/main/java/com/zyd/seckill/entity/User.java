@@ -1,9 +1,10 @@
 package com.zyd.seckill.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import java.time.LocalDateTime;
+
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
@@ -40,12 +41,14 @@ public class User implements Serializable {
     /**
      * 注册时间
      */
-    private LocalDateTime registerDate;
+    private Date registerDate;
 
     /**
      * 最后一次登录时间
      */
-    private LocalDateTime lastLoginDate;
+    private Date lastLoginDate;
+
+
 
     /**
      * 登录次数
@@ -93,19 +96,19 @@ public class User implements Serializable {
         this.head = head;
     }
 
-    public LocalDateTime getRegisterDate() {
+    public Date getRegisterDate() {
         return registerDate;
     }
 
-    public void setRegisterDate(LocalDateTime registerDate) {
+    public void setRegisterDate(Date registerDate) {
         this.registerDate = registerDate;
     }
 
-    public LocalDateTime getLastLoginDate() {
+    public Date getLastLoginDate() {
         return lastLoginDate;
     }
 
-    public void setLastLoginDate(LocalDateTime lastLoginDate) {
+    public void setLastLoginDate(Date lastLoginDate) {
         this.lastLoginDate = lastLoginDate;
     }
 
