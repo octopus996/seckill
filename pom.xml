@@ -88,6 +88,11 @@
             <artifactId>velocity-engine-core</artifactId>
             <version>2.1</version>
         </dependency>
+        <!--validation-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

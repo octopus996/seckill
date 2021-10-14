@@ -43,7 +43,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if(null==user.getId()){
             return RespBean.error(RespBeanEnum.LOGIN_ERROR);
         }
-        if(!MD5.inputPassToDBPass(password,user.getSalt()).equals(user.getPassword())){
+        if(!MD5.formPassToDBPass(password,user.getSalt()).equals(user.getPassword())){
             return RespBean.error(RespBeanEnum.LOGIN_ERROR);
         }
         return RespBean.success();
