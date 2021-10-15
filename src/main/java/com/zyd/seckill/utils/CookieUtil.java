@@ -1,5 +1,7 @@
 package com.zyd.seckill.utils;
 
+import org.springframework.stereotype.Component;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,6 +14,7 @@ import java.net.URLEncoder;
  * @author zhoubin
  * @since 1.0.0
  */
+@Component
 public final class CookieUtil {
     /**
      * 得到Cookie的值, 不编码

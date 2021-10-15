@@ -1,10 +1,16 @@
 package com.zyd.seckill.service;
 
+
+
 import com.zyd.seckill.entity.User;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zyd.seckill.vo.LoginVo;
 import com.zyd.seckill.vo.RespBean;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 
 /**
  * <p>
@@ -16,5 +22,5 @@ import com.zyd.seckill.vo.RespBean;
  */
 public interface UserService extends IService<User> {
 
-    RespBean doLogin(LoginVo loginVo);
+    RespBean doLogin(LoginVo loginVo, HttpServletRequest request, HttpServletResponse response);
 }
