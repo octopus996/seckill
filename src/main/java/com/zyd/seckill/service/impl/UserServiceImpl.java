@@ -39,10 +39,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if(!ValidatorUtil.isMobile(mobile)){
             return RespBean.error(RespBeanEnum.MOBILE_ERROR);
         }
+        //根据手机号获取用户
         User user = userMapper.selectById(mobile.trim());
         if(null==user.getId()){
             return RespBean.error(RespBeanEnum.LOGIN_ERROR);
         }
+        //判断密码是否正确
         if(!MD5.formPassToDBPass(password,user.getSalt()).equals(user.getPassword())){
             return RespBean.error(RespBeanEnum.LOGIN_ERROR);
         }
