@@ -6,6 +6,30 @@ spring:
     url: jdbc:mysql://localhost:3306/seckill?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+#redis配置
+  redis:
+    #服务器地址
+    host: 172.30.1.72
+    #端口
+    port: 6379
+    #默认操作的数据库
+    database: 0
+    #连接超时
+    connect-timeout: 10000ms
+
+    lettuce:
+      pool:
+        #最大连接数
+        max-active: 8
+        #最大连接阻塞等待时间，默认-1
+        max-wait: 10000ms
+        #最大空闲连接，默认未8
+        max-idle: 200
+        #最小空闲连接,默认未0，
+        min-idle: 5
+
+
+
 #Mybatis-plus配置
 mybatis-plus:
   #配置Mapper.xml映射文件
@@ -20,3 +44,6 @@ mybatis-plus:
 logging:
   level:
     com.jd.mapper: debug
+
+
+
