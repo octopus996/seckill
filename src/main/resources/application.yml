@@ -13,7 +13,7 @@ spring:
     #端口
     port: 6379
     #默认操作的数据库
-    database: 0
+    database: 1
     #连接超时
     connect-timeout: 10000ms
 

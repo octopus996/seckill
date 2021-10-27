@@ -16,7 +16,7 @@ import com.zyd.seckill.vo.RespBeanEnum;
 import org.apache.commons.lang3.StringUtils;
 
 
-
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +35,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Resource
     private UserMapper userMapper;
+    @Resource
+    private RedisTemplate redisTemplate;
+
+
 
     @Override
     public RespBean doLogin(LoginVo loginVo, HttpServletRequest request, HttpServletResponse response) {
@@ -59,9 +63,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         //生成Cookie
         String ticket= UUIDUtil.randomUUID();
         //设置session
-        request.getSession().setAttribute(ticket,user);
+        //request.getSession().setAttribute(ticket,user);
+        //将用户信息存储redis
+        redisTemplate.opsForValue().set("user:"+ticket,user);
+
         //设置cookie
         CookieUtil.setCookie(request,response,"userTicket",ticket);
         return RespBean.success();
+    }
+
+    @Override
+    public User getUserByCookie(String userTicket, HttpServletRequest request, HttpServletResponse response) {
+        if (StringUtils.isEmpty(userTicket)){
+            return null;
+        }
+        User user = (User) redisTemplate.opsForValue().get("user:"+userTicket);
+        if (null!=user){
+            CookieUtil.setCookie(request,response,"userTicket",userTicket);
+        }
+        return user;
     }
 }
