@@ -20,8 +20,9 @@ public class GoodsController {
     private UserService userService;
 
     @RequestMapping("/goodsList")
-    public String goodsList(HttpSession session, Model model, @CookieValue("userTicket") String ticket, HttpServletRequest request, HttpServletResponse response){
-        if (StringUtils.isEmpty(ticket)){
+    //public String goodsList(HttpSession session, Model model, @CookieValue("userTicket") String ticket, HttpServletRequest request, HttpServletResponse response){
+    public String goodsList(User user,Model model){
+        /*if (StringUtils.isEmpty(ticket)){
             return "login";
         }
         //获取cookie,强转为user
@@ -29,7 +30,7 @@ public class GoodsController {
         User user = userService.getUserByCookie(ticket,request,response);
         if (null==user){
             return "login";
-        }
+        }*/
         model.addAttribute("user",user);
         return "goodsList";
     }
