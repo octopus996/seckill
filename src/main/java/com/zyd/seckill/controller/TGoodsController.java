@@ -11,11 +11,11 @@ import org.springframework.stereotype.Controller;
  * </p>
  *
  * @author zyd
- * @since 2021-10-09
+ * @since 2021-11-01
  */
 @Controller
-@RequestMapping("/zyd/user")
-public class UserController {
+@RequestMapping("/seckill/t-goods")
+public class TGoodsController {
 
 }
 
