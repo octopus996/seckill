@@ -13,10 +13,10 @@ import java.util.List;
 @EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
 
-    private static final String[] CLASSPATH_RESOURCE_LOCALTIONS={
+    /*private static final String[] CLASSPATH_RESOURCE_LOCALTIONS={
             "classpath:/resources/","classpath:/static/",
             "classpath:/public"
-    };
+    };*/
 
     @Resource
     private UserArgumentResolve userArgumentResolve;
@@ -30,7 +30,8 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        if (!registry.hasMappingForPattern("/webjars/**")){
+        registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
+        /*if (!registry.hasMappingForPattern("/webjars/**")){
             registry.addResourceHandler("/webjars/**").addResourceLocations(
                     "classpath:/META-INF/resources/webjars/");
         }
@@ -38,6 +39,7 @@ public class WebConfig implements WebMvcConfigurer {
             registry.addResourceHandler("/**").addResourceLocations(
                     CLASSPATH_RESOURCE_LOCALTIONS
             );
-        }
+        }*/
+
     }
 }

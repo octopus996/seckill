@@ -1,8 +1,8 @@
 package com.zyd.seckill.service.impl;
 
 
-import com.zyd.seckill.entity.User;
 import com.zyd.seckill.dao.UserMapper;
+import com.zyd.seckill.entity.User;
 import com.zyd.seckill.exception.GlobalException;
 import com.zyd.seckill.service.UserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -53,6 +53,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         //根据手机号获取用户
         User user = userMapper.selectById(mobile.trim());
+
         if(null==user.getId()){
             throw new GlobalException(RespBeanEnum.LOGIN_ERROR);
         }

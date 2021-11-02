@@ -2,9 +2,8 @@ package com.zyd.seckill.service;
 
 
 
-import com.zyd.seckill.entity.User;
-
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zyd.seckill.entity.User;
 import com.zyd.seckill.vo.LoginVo;
 import com.zyd.seckill.vo.RespBean;
 

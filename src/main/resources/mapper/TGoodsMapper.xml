@@ -18,4 +18,23 @@
         id, goods_name, goods_title, goods_img, goods_detail, goods_price, goods_stock
     </sql>
 
+    <!--获取商品列表-->
+    <select id="findGoodsVo" resultType="com.zyd.seckill.vo.GoodsVo">
+        SELECT
+            g.id,
+            g.goods_name goodsName,
+            g.goods_title goodsTitle,
+            g.goods_img goodsImg,
+            g.goods_detail goodsDetail,
+            g.goods_price goodsPrice,
+            g.goods_stock goodsStock,
+            sg.seckill_price seckillPrice,
+            sg.stock_count stockCount,
+            sg.start_date startDate,
+            sg.end_date endDate
+        FROM
+             t_goods g
+         LEFT JOIN t_seckill_goods sg on g.id=sg.goods_id
+    </select>
+
 </mapper>

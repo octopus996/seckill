@@ -4,7 +4,11 @@ import com.zyd.seckill.entity.TGoods;
 import com.zyd.seckill.dao.TGoodsMapper;
 import com.zyd.seckill.service.TGoodsService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zyd.seckill.vo.GoodsVo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -17,4 +21,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class TGoodsServiceImpl extends ServiceImpl<TGoodsMapper, TGoods> implements TGoodsService {
 
+    @Autowired
+    private TGoodsMapper goodsMapper;
+
+    @Override
+    public List<GoodsVo> findGoodsVo() {
+        return goodsMapper.findGoodsVo();
+    }
 }

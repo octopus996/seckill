@@ -2,6 +2,9 @@ package com.zyd.seckill.dao;
 
 import com.zyd.seckill.entity.TGoods;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.zyd.seckill.vo.GoodsVo;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface TGoodsMapper extends BaseMapper<TGoods> {
 
+    List<GoodsVo> findGoodsVo();
 }

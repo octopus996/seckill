@@ -24,6 +24,7 @@ public class UserArgumentResolve implements HandlerMethodArgumentResolver {
     public boolean supportsParameter(MethodParameter parameter) {
         //获取请求参数
         Class<?> clazz = parameter.getParameterType();
+        //如果为true进行到下一步
         return clazz == User.class;
     }
 
@@ -31,10 +32,12 @@ public class UserArgumentResolve implements HandlerMethodArgumentResolver {
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
         HttpServletResponse response = webRequest.getNativeResponse(HttpServletResponse.class);
+        //获取cookie值
         String ticket = CookieUtil.getCookieValue(request, "userTicket");
         if (StringUtils.isEmpty(ticket)){
             return null;
         }
+        //根据cookie获取user数据并返回，达到session共享
         return userService.getUserByCookie(ticket,request,response);
     }
 }

@@ -1,8 +1,7 @@
 package com.zyd.seckill.dao;
 
-import com.zyd.seckill.entity.User;
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.zyd.seckill.entity.User;
 
 /**
  * <p>
