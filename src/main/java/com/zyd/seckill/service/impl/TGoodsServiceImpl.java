@@ -28,4 +28,9 @@ public class TGoodsServiceImpl extends ServiceImpl<TGoodsMapper, TGoods> impleme
     public List<GoodsVo> findGoodsVo() {
         return goodsMapper.findGoodsVo();
     }
+
+    @Override
+    public GoodsVo findGoodsVoByGoodsId(Long goodsId) {
+        return goodsMapper.findGoodsVoByGoodsId(goodsId);
+    }
 }

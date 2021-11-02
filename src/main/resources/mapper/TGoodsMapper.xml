@@ -37,4 +37,26 @@
          LEFT JOIN t_seckill_goods sg on g.id=sg.goods_id
     </select>
 
+    <!--根据商品编号查询商品详情-->
+    <select id="findGoodsVoByGoodsId" resultType="com.zyd.seckill.vo.GoodsVo">
+        SELECT
+            g.id goodsId,
+            g.goods_name goodsName,
+            g.goods_title GoodsTitle,
+            g.goods_img goodsImg,
+            g.goods_detail goodsDetail,
+            g.goods_price goodsPrice,
+            g.goods_stock goodsStock,
+            sg.seckill_price seckillPrice,
+            sg.stock_count stockCount,
+            sg.start_date startDate,
+            sg.end_date endDate
+        FROM
+             t_goods g
+         LEFT JOIN
+             t_seckill_goods sg on g.id=sg.goods_id
+         where
+             g.id=#{goodsId}
+    </select>
+
 </mapper>

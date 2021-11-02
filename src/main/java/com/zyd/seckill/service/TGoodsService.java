@@ -17,4 +17,6 @@ import java.util.List;
 public interface TGoodsService extends IService<TGoods> {
 
     List<GoodsVo> findGoodsVo();
+
+    GoodsVo findGoodsVoByGoodsId(Long goodsId);
 }
