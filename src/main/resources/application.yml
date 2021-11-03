@@ -27,6 +27,10 @@ spring:
         max-idle: 200
         #最小空闲连接,默认未0，
         min-idle: 5
+  jackson:
+    default-property-inclusion: always
+    time-zone: GMT+8
+    date-format: java.text.SimpleDateFormat
 
 
 

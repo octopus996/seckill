@@ -42,9 +42,11 @@ public class GoodsController {
         List<GoodsVo> goodsList = goodsService.findGoodsVo();
         model.addAttribute("goodsList",goodsList);
 
-        System.out.println(goodsService.findGoodsVo());
-
         model.addAttribute("user",user);
+
+
+
+
         return "goodsList";
     }
     @RequestMapping("/toDetail/{goodsId}")
@@ -53,7 +55,7 @@ public class GoodsController {
         model.addAttribute("user",user);
         //更具前台传来的商品id查询商品详情
         GoodsVo goods=goodsService.findGoodsVoByGoodsId(goodsId);
-
+        System.out.println(goods);
         //将商品详情传到前端
         model.addAttribute("goods",goods);
 

@@ -18,9 +18,12 @@ import org.apache.commons.lang3.StringUtils;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestMapping;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
 
 /**
  * <p>
@@ -37,7 +40,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private UserMapper userMapper;
     @Resource
     private RedisTemplate redisTemplate;
-
+    @Resource
+    private UserService userService;
 
 
     @Override
@@ -52,7 +56,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return RespBean.error(RespBeanEnum.MOBILE_ERROR);
         }
         //根据手机号获取用户
-        User user = userMapper.selectById(mobile.trim());
+        User user ;
+        user= userMapper.selectById(mobile.trim());
+
+
 
         if(null==user.getId()){
             throw new GlobalException(RespBeanEnum.LOGIN_ERROR);
@@ -70,6 +77,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         //设置cookie
         CookieUtil.setCookie(request,response,"userTicket",ticket);
+
+
         return RespBean.success();
     }
 
