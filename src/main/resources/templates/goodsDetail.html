@@ -37,7 +37,7 @@
         <tr>
             <td>秒杀开始时间</td>
             <td th:text="${#dates.format(goods.startDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
-
+            <!--<td th:text="${goods.startDate}"></td>-->
             <td id="seckillTip">
                 <input type="hidden" id="remainSeconds"
                        th:value="${remainSeconds}"/>

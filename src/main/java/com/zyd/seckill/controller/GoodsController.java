@@ -9,11 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -40,6 +43,7 @@ public class GoodsController {
             return "login";
         }*/
         List<GoodsVo> goodsList = goodsService.findGoodsVo();
+        System.out.println(goodsList);
         model.addAttribute("goodsList",goodsList);
 
         model.addAttribute("user",user);
@@ -49,15 +53,19 @@ public class GoodsController {
 
         return "goodsList";
     }
+
     @RequestMapping("/toDetail/{goodsId}")
     public String toDetail(@PathVariable Long goodsId, User user, Model model){
         //将redis获取的user传到前端
         model.addAttribute("user",user);
         //更具前台传来的商品id查询商品详情
         GoodsVo goods=goodsService.findGoodsVoByGoodsId(goodsId);
+
+
+
         System.out.println(goods);
         //将商品详情传到前端
-        model.addAttribute("goods",goods);
+        model.addAttribute("goods", goods);
 
         Date startDate = goods.getStartDate();
         Date endDate = goods.getEndDate();
