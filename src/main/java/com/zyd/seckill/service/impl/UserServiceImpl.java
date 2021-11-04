@@ -56,10 +56,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return RespBean.error(RespBeanEnum.MOBILE_ERROR);
         }
         //根据手机号获取用户
-        User user ;
-        user= userMapper.selectById(mobile.trim());
+        User user =userMapper.selectById(mobile.trim());
 
-
+        if (null == user.getRegisterDate()){
+            user.setLastLoginDate(new Date());
+        }
+        user.setLastLoginDate(new Date());
+        user.setLoginCount(user.getLoginCount()+1);
+        userMapper.updateById(user);
 
         if(null==user.getId()){
             throw new GlobalException(RespBeanEnum.LOGIN_ERROR);

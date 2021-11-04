@@ -63,7 +63,7 @@ public class GoodsController {
 
 
 
-        System.out.println(goods);
+
         //将商品详情传到前端
         model.addAttribute("goods", goods);
 

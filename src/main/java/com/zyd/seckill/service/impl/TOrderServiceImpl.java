@@ -12,6 +12,7 @@ import com.zyd.seckill.service.TGoodsService;
 import com.zyd.seckill.service.TOrderService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zyd.seckill.service.TSeckillGoodsService;
+import com.zyd.seckill.service.TSeckillOrderService;
 import com.zyd.seckill.vo.GoodsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,10 @@ public class TOrderServiceImpl extends ServiceImpl<TOrderMapper, TOrder> impleme
 
     @Autowired
     private TSeckillGoodsService seckillGoodsService;
+    @Autowired
+    private TOrderMapper orderMapper;
+    @Autowired
+    private TSeckillOrderService seckillOrderService;
 
     @Override
     public TOrder seckill(User user, GoodsVo goods) {
@@ -40,6 +45,8 @@ public class TOrderServiceImpl extends ServiceImpl<TOrderMapper, TOrder> impleme
         seckillGoodsService.updateById(seckillGoods);
         //生成秒杀订单
         TOrder order = new TOrder();
+
+        order.setOrderStatus(0);
         order.setUserId(user.getId());
         order.setGoodsId(goods.getId());
         order.setDeliveryAddrId(0L);
@@ -48,9 +55,16 @@ public class TOrderServiceImpl extends ServiceImpl<TOrderMapper, TOrder> impleme
         order.setGoodsPrice(goods.getGoodsPrice());
         order.setOrderChannel(0);
         order.setCreateDate(new Date());
+        orderMapper.insert(order);
+        //生成秒杀订单
+         TSeckillOrder seckillOrder = new TSeckillOrder();
+
+         seckillOrder.setUserId(user.getId());
+         seckillOrder.setOrderId(order.getId());
+         seckillOrder.setGoodsId(goods.getId());
+        seckillOrderService.save(seckillOrder);
 
 
-
-        return null;
+        return order;
     }
 }

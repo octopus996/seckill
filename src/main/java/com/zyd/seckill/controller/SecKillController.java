@@ -26,7 +26,7 @@ public class SecKillController {
     private TOrderService orderService;
 
 
-    @RequestMapping("/doSecKill")
+    @RequestMapping("/doSeckill")
     public String doSecKill(Model model, User user, Long goodsId){
 
         if (null == user){

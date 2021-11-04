@@ -2,10 +2,9 @@ package com.zyd.seckill.entity;
 
 import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotation.IdType;
-import java.util.Date;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
 import java.util.Date;
+import java.io.Serializable;
 
 /**
  * <p>
@@ -13,15 +12,12 @@ import java.util.Date;
  * </p>
  *
  * @author zyd
- * @since 2021-11-01
+ * @since 2021-11-04
  */
 public class TOrder implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 订单ID
-     */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
@@ -69,6 +65,8 @@ public class TOrder implements Serializable {
      * 支付时间
      */
     private Date payDate;
+
+    private Integer orderStatus;
 
 
     public Long getId() {
@@ -151,6 +149,14 @@ public class TOrder implements Serializable {
         this.payDate = payDate;
     }
 
+    public Integer getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(Integer orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
     @Override
     public String toString() {
         return "TOrder{" +
@@ -164,6 +170,7 @@ public class TOrder implements Serializable {
         ", orderChannel=" + orderChannel +
         ", createDate=" + createDate +
         ", payDate=" + payDate +
+        ", orderStatus=" + orderStatus +
         "}";
     }
 }
