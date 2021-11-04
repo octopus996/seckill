@@ -56,7 +56,15 @@
                     <input type="hidden" name="goodsId" th:value="${goods.id}"/>
                 </form>
             </td>
+
+
+
         </tr>
+        <td>商品id</td>
+        <tr>
+            <td th="${goods.id}"></td>
+        </tr>
+
         <tr>
             <td>商品原价</td>
             <td colspan="3" th:text="${goods.goodsPrice}"></td>
@@ -67,7 +75,7 @@
         </tr>
         <tr>
             <td>库存数量</td>
-            <td colspan="3" th:text="${goods.stockCount}"></td>
+            <td colspan="3" th:text="${goods.stockCount}" readonly="readonly"></td>
 
         </tr>
     </table>

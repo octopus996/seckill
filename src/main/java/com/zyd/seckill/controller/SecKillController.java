@@ -12,6 +12,7 @@ import com.zyd.seckill.vo.RespBeanEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -33,6 +34,7 @@ public class SecKillController {
             return "login";
         }
         model.addAttribute("user",user);
+        //根据商品ID查找该商品
         GoodsVo goods = goodsService.findGoodsVoByGoodsId(goodsId);
         //判断库存
         if (goods.getStockCount()<1){

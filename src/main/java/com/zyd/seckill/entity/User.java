@@ -3,6 +3,8 @@ package com.zyd.seckill.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 
 import com.baomidou.mybatisplus.annotation.TableId;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -41,11 +43,13 @@ public class User implements Serializable {
     /**
      * 注册时间
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date registerDate;
 
     /**
      * 最后一次登录时间
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date lastLoginDate;
 
 

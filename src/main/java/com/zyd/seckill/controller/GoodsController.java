@@ -43,7 +43,7 @@ public class GoodsController {
             return "login";
         }*/
         List<GoodsVo> goodsList = goodsService.findGoodsVo();
-        System.out.println(goodsList);
+        
         model.addAttribute("goodsList",goodsList);
 
         model.addAttribute("user",user);

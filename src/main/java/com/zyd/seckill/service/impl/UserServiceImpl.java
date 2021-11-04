@@ -59,7 +59,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User user =userMapper.selectById(mobile.trim());
 
         if (null == user.getRegisterDate()){
-            user.setLastLoginDate(new Date());
+            user.setRegisterDate(new Date());
         }
         user.setLastLoginDate(new Date());
         user.setLoginCount(user.getLoginCount()+1);

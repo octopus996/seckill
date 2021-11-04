@@ -40,17 +40,17 @@
     <!--根据商品编号查询商品详情-->
     <select id="findGoodsVoByGoodsId" resultType="com.zyd.seckill.vo.GoodsVo">
         SELECT
-            g.id goodsId,
-            g.goods_name goodsName,
-            g.goods_title GoodsTitle,
-            g.goods_img goodsImg,
-            g.goods_detail goodsDetail,
-            g.goods_price goodsPrice,
-            g.goods_stock goodsStock,
-            sg.seckill_price seckillPrice,
-            sg.stock_count stockCount,
-            sg.start_date startDate,
-            sg.end_date endDate
+            g.id ,
+            g.goods_name ,
+            g.goods_title ,
+            g.goods_img ,
+            g.goods_detail ,
+            g.goods_price ,
+            g.goods_stock ,
+            sg.seckill_price ,
+            sg.stock_count ,
+            sg.start_date ,
+            sg.end_date
         FROM
              t_goods g
          LEFT JOIN
