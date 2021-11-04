@@ -1,9 +1,11 @@
 package com.zyd.seckill.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.zyd.seckill.entity.TOrder;
 import com.zyd.seckill.entity.TSeckillOrder;
 import com.zyd.seckill.entity.User;
 import com.zyd.seckill.service.TGoodsService;
+import com.zyd.seckill.service.TOrderService;
 import com.zyd.seckill.service.TSeckillOrderService;
 import com.zyd.seckill.vo.GoodsVo;
 import com.zyd.seckill.vo.RespBeanEnum;
@@ -20,6 +22,9 @@ public class SecKillController {
     private TGoodsService goodsService;
     @Autowired
     private TSeckillOrderService seckillOrderService;
+    @Autowired
+    private TOrderService orderService;
+
 
     @RequestMapping("/doSecKill")
     public String doSecKill(Model model, User user, Long goodsId){
@@ -28,9 +33,9 @@ public class SecKillController {
             return "login";
         }
         model.addAttribute("user",user);
-        GoodsVo good = goodsService.findGoodsVoByGoodsId(goodsId);
+        GoodsVo goods = goodsService.findGoodsVoByGoodsId(goodsId);
         //判断库存
-        if (good.getStockCount()<1){
+        if (goods.getStockCount()<1){
             model.addAttribute("errmsg", RespBeanEnum.EMPTY_STOCK.getMessage());
             return "seckllFail";
         }
@@ -43,5 +48,10 @@ public class SecKillController {
             model.addAttribute("errmsg",RespBeanEnum.REPEATE_ERROR.getMessage());
             return "seckillFail";
         }
+        //抢购
+        TOrder order =orderService.seckill(user,goods);
+        model.addAttribute("order",order);
+        model.addAttribute("goods",goods);
+        return "OrderDetail";
     }
 }

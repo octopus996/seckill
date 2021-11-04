@@ -2,6 +2,8 @@ package com.zyd.seckill.service;
 
 import com.zyd.seckill.entity.TOrder;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.zyd.seckill.entity.User;
+import com.zyd.seckill.vo.GoodsVo;
 
 /**
  * <p>
@@ -13,4 +15,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface TOrderService extends IService<TOrder> {
 
+    TOrder seckill(User user, GoodsVo goods);
 }

@@ -1,9 +1,19 @@
 package com.zyd.seckill.service.impl;
+import java.math.BigDecimal;
+import java.util.Date;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zyd.seckill.entity.TOrder;
 import com.zyd.seckill.dao.TOrderMapper;
+import com.zyd.seckill.entity.TSeckillGoods;
+import com.zyd.seckill.entity.TSeckillOrder;
+import com.zyd.seckill.entity.User;
+import com.zyd.seckill.service.TGoodsService;
 import com.zyd.seckill.service.TOrderService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zyd.seckill.service.TSeckillGoodsService;
+import com.zyd.seckill.vo.GoodsVo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -17,4 +27,30 @@ import org.springframework.stereotype.Service;
 @Service
 public class TOrderServiceImpl extends ServiceImpl<TOrderMapper, TOrder> implements TOrderService {
 
+    @Autowired
+    private TSeckillGoodsService seckillGoodsService;
+
+    @Override
+    public TOrder seckill(User user, GoodsVo goods) {
+        //获取秒杀商品信息
+        TSeckillGoods seckillGoods = seckillGoodsService.getOne(new QueryWrapper<TSeckillGoods>().eq("goods_id", goods.getId()));
+        if (seckillGoods.getStockCount()>1){
+            seckillGoods.setStockCount(seckillGoods.getStockCount()-1);
+        }
+        seckillGoodsService.updateById(seckillGoods);
+        //生成秒杀订单
+        TOrder order = new TOrder();
+        order.setUserId(user.getId());
+        order.setGoodsId(goods.getId());
+        order.setDeliveryAddrId(0L);
+        order.setGoodsName(goods.getGoodsName());
+        order.setGoodsCount(goods.getStockCount());
+        order.setGoodsPrice(goods.getGoodsPrice());
+        order.setOrderChannel(0);
+        order.setCreateDate(new Date());
+
+
+
+        return null;
+    }
 }
