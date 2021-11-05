@@ -3,9 +3,31 @@
     xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>抢购错误页面</title>
+    <!-- jquery -->
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
 </head>
 <body>
 抢购失败:<p th:text="${errmsg}"></p>
+<span id="countDown" th:text="5" ></span><span>后自动<a href="/goods/goodsList">跳转</a>页面！</span>
 </body>
+<script>
+    $(function () {
+        countDown();
+    });
+    function countDown() {
+        var remainTime = $("#countDown").text();
+        var timeOut;
+        timeOut=setTimeout(function () {
+            $("#countDown").text(remainTime-1);
+            countDown();
+        },1000);
+
+    }
+
+    setInterval(go,5000);
+    function go() {
+        window.location.href="/goods/goodsList"
+    }
+</script>
 </html>

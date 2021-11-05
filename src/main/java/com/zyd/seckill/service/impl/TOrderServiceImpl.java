@@ -52,7 +52,7 @@ public class TOrderServiceImpl extends ServiceImpl<TOrderMapper, TOrder> impleme
         order.setDeliveryAddrId(0L);
         order.setGoodsName(goods.getGoodsName());
         order.setGoodsCount(goods.getStockCount());
-        order.setGoodsPrice(goods.getGoodsPrice());
+        order.setGoodsPrice(seckillGoods.getSeckillPrice());
         order.setOrderChannel(0);
         order.setCreateDate(new Date());
         orderMapper.insert(order);

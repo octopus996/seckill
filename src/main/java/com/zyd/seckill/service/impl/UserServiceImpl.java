@@ -1,8 +1,10 @@
 package com.zyd.seckill.service.impl;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.zyd.seckill.dao.UserMapper;
 import com.zyd.seckill.entity.User;
+
 import com.zyd.seckill.exception.GlobalException;
 import com.zyd.seckill.service.UserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -48,15 +50,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public RespBean doLogin(LoginVo loginVo, HttpServletRequest request, HttpServletResponse response) {
         String mobile = loginVo.getMobile();
         String password = loginVo.getPassword();
+
         if(StringUtils.isBlank(mobile.trim()) || StringUtils.isBlank(password.trim())){
             //返回枚举类型
-            return  RespBean.error(RespBeanEnum.LOGIN_ERROR);
+            throw new GlobalException(RespBeanEnum.LOGIN_ERROR);
         }
         if(!ValidatorUtil.isMobile(mobile)){
-            return RespBean.error(RespBeanEnum.MOBILE_ERROR);
+            throw new GlobalException(RespBeanEnum.MOBILE_ERROR);
         }
         //根据手机号获取用户
-        User user =userMapper.selectById(mobile.trim());
+       User user = userService.getOne(new QueryWrapper<User>().eq("id", mobile));
+        System.out.println(user);
 
         if (null == user.getRegisterDate()){
             user.setRegisterDate(new Date());
@@ -66,11 +70,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         userMapper.updateById(user);
 
         if(null==user.getId()){
-            throw new GlobalException(RespBeanEnum.LOGIN_ERROR);
+            return RespBean.error(RespBeanEnum.LOGIN_ERROR);
         }
         //判断密码是否正确
         if(!MD5.formPassToDBPass(password,user.getSalt()).equals(user.getPassword())){
-            throw new GlobalException(RespBeanEnum.LOGIN_ERROR);
+            return RespBean.error(RespBeanEnum.LOGIN_ERROR);
         }
         //生成Cookie
         String ticket= UUIDUtil.randomUUID();

@@ -10,11 +10,11 @@ spring:
 #redis配置
   redis:
     #服务器地址
-    host: 192.168.101.134
+    host: 172.30.1.45
     #端口
     port: 6379
     #默认操作的数据库
-    database: 1
+    database: 2
     #连接超时
     connect-timeout: 10000ms
 

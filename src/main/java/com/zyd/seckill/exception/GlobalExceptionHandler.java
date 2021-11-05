@@ -1,3 +1,4 @@
+
 package com.zyd.seckill.exception;
 
 import com.zyd.seckill.vo.RespBean;
@@ -28,3 +29,4 @@ public class GlobalExceptionHandler {
     }
 
 }
+

@@ -3,6 +3,7 @@ package com.zyd.seckill.config;
 import com.zyd.seckill.entity.User;
 import com.zyd.seckill.service.UserService;
 import com.zyd.seckill.utils.CookieUtil;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,7 @@ public class UserArgumentResolve implements HandlerMethodArgumentResolver {
     public boolean supportsParameter(MethodParameter parameter) {
         //获取请求参数
         Class<?> clazz = parameter.getParameterType();
+
         //如果为true进行到下一步
         return clazz == User.class;
     }
