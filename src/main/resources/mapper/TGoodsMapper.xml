@@ -22,16 +22,16 @@
     <select id="findGoodsVo" resultType="com.zyd.seckill.vo.GoodsVo">
         SELECT
             g.id,
-            g.goods_name goodsName,
-            g.goods_title goodsTitle,
-            g.goods_img goodsImg,
-            g.goods_detail goodsDetail,
-            g.goods_price goodsPrice,
-            g.goods_stock goodsStock,
-            sg.seckill_price seckillPrice,
-            sg.stock_count stockCount,
-            sg.start_date startDate,
-            sg.end_date endDate
+            g.goods_name ,
+            g.goods_title ,
+            g.goods_img ,
+            g.goods_detail ,
+            g.goods_price ,
+            g.goods_stock ,
+            sg.seckill_price ,
+            sg.stock_count ,
+            sg.start_date ,
+            sg.end_date
         FROM
              t_goods g
          LEFT JOIN t_seckill_goods sg on g.id=sg.goods_id
