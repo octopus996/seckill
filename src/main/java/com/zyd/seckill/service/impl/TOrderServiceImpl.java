@@ -34,6 +34,9 @@ public class TOrderServiceImpl extends ServiceImpl<TOrderMapper, TOrder> impleme
     private TOrderMapper orderMapper;
     @Autowired
     private TSeckillOrderService seckillOrderService;
+    @Autowired
+    private TGoodsService goodsService;
+
 
     @Override
     public TOrder seckill(User user, GoodsVo goods) {
@@ -43,6 +46,10 @@ public class TOrderServiceImpl extends ServiceImpl<TOrderMapper, TOrder> impleme
             seckillGoods.setStockCount(seckillGoods.getStockCount()-1);
         }
         seckillGoodsService.updateById(seckillGoods);
+        if(goods.getStockCount()>0){
+            goods.setGoodsStock(goods.getGoodsStock()-1);
+        }
+        goodsService.updateById(goods);
         //生成秒杀订单
         TOrder order = new TOrder();
 
