@@ -56,7 +56,7 @@
                     <input type="hidden" name="goodsId" th:value="${goods.id}"/>
                 </form>
             </td>
-
+        <tr>
             <td>商品原价</td>
             <td colspan="3" th:text="${goods.goodsPrice}"></td>
         </tr>
@@ -70,8 +70,9 @@
 
         </tr>
     </table>
-    <!--<p th:text="'hello:'+${user.nickname}"></p>-->
+
 </div>
+<!--<p th:text="'hello:'+${user.nickname}"></p>-->
 </body>
 <script>
     $(function(){
