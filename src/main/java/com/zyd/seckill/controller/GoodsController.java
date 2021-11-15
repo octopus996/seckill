@@ -5,20 +5,28 @@ import com.zyd.seckill.entity.User;
 import com.zyd.seckill.service.TGoodsService;
 import com.zyd.seckill.service.UserService;
 import com.zyd.seckill.vo.GoodsVo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.thymeleaf.context.WebContext;
+import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 @RequestMapping("/goods")
@@ -27,10 +35,16 @@ public class GoodsController {
     private UserService userService;
     @Autowired
     private TGoodsService goodsService;
+    @Autowired
+    private RedisTemplate redisTemplate;
+    @Autowired
+    private ThymeleafViewResolver thymeleafViewResolver;
 
-    @RequestMapping("/goodsList")
+    @RequestMapping(value = "/goodsList" ,produces = "text/html;charset=utf-8")
+    @ResponseBody
     //public String goodsList(HttpSession session, Model model, @CookieValue("userTicket") String ticket, HttpServletRequest request, HttpServletResponse response){
-    public String goodsList(User user, Model model){
+    public String goodsList(User user, Model model, HttpServletRequest request,
+                            HttpServletResponse response){
 
 
         /*if (StringUtils.isEmpty(ticket)){
@@ -42,16 +56,28 @@ public class GoodsController {
         if (null==user){
             return "login";
         }*/
+
+        //redis中获取页面，如果不为空，直接返回页面
+        ValueOperations valueOperations = redisTemplate.opsForValue();
+        String html = (String) valueOperations.get("goodsList");
+        if (!StringUtils.isEmpty(html)){
+            return html;
+        }
         List<GoodsVo> goodsList = goodsService.findGoodsVo();
         
         model.addAttribute("goodsList",goodsList);
 
         model.addAttribute("user",user);
+        //如果为空，手动渲染，存入redis并返回
+        WebContext context = new WebContext(request, response, request.getServletContext(), request.getLocale(), model.asMap());
+        html = thymeleafViewResolver.getTemplateEngine().process("goodsList", context);
+        if (!StringUtils.isEmpty(html)){
+            valueOperations.set("goodsList",html,60, TimeUnit.SECONDS);
+        }
 
 
 
-
-        return "goodsList";
+        return html;
     }
 
     @RequestMapping("/toDetail/{goodsId}")
