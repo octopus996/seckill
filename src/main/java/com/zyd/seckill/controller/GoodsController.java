@@ -127,7 +127,8 @@ public class GoodsController {
 
         //将页面缓存到redis中
         if (!StringUtils.isEmpty(html)){
-            redisTemplate.opsForValue().set("goodsDetail",html);
+            //在redis中存入商品详情页并设置缓存时间未60秒
+            redisTemplate.opsForValue().set("goodsDetail",html,60,TimeUnit.SECONDS);
         }
         return html;
     }
