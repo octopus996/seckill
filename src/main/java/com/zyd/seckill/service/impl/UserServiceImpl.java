@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -81,7 +82,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         //设置session
         //request.getSession().setAttribute(ticket,user);
         //将用户信息存储redis
-        redisTemplate.opsForValue().set("user:"+ticket,user);
+        redisTemplate.opsForValue().set("user:"+ticket,user,60, TimeUnit.MINUTES);
 
         //设置cookie
         CookieUtil.setCookie(request,response,"userTicket",ticket);
