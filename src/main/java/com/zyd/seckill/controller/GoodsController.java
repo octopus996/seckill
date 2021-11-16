@@ -1,6 +1,5 @@
 package com.zyd.seckill.controller;
 
-import com.zyd.seckill.entity.TGoods;
 import com.zyd.seckill.entity.User;
 import com.zyd.seckill.service.TGoodsService;
 import com.zyd.seckill.service.UserService;
@@ -12,7 +11,6 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.thymeleaf.context.WebContext;
@@ -22,8 +20,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -81,7 +77,17 @@ public class GoodsController {
     }
 
     @RequestMapping("/toDetail/{goodsId}")
-    public String toDetail(@PathVariable Long goodsId, User user, Model model){
+    @ResponseBody
+    public String toDetail(@PathVariable Long goodsId, User user, Model model
+        ,HttpServletResponse response,HttpServletRequest request){
+        //从redis中获取页面
+        String html ;
+                html= (String) redisTemplate.opsForValue().get("goodsDetail" + goodsId);
+        //如果redis中存在，直接返回页面
+        if (!StringUtils.isEmpty(html)){
+            return html;
+        }
+
         //将redis获取的user传到前端
         model.addAttribute("user",user);
         //更具前台传来的商品id查询商品详情
@@ -114,6 +120,15 @@ public class GoodsController {
         }
         model.addAttribute("seckillStatus",seckillStatus);
         model.addAttribute("remainSeconds",remainSeconds);
-        return "goodsDetail";
+        /*return "goodsDetail";*/
+        //手动渲染
+        WebContext context = new WebContext(request, response, request.getServletContext(), request.getLocale(), model.asMap());
+        html = thymeleafViewResolver.getTemplateEngine().process("goodsDetail", context);
+
+        //将页面缓存到redis中
+        if (!StringUtils.isEmpty(html)){
+            redisTemplate.opsForValue().set("goodsDetail",html);
+        }
+        return html;
     }
 }
