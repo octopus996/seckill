@@ -76,7 +76,7 @@ public class GoodsController {
         return html;
     }
 
-    @RequestMapping("/toDetail/{goodsId}")
+    @RequestMapping(value = "/toDetail/{goodsId}",produces = "text/html;charset=utf-8")
     @ResponseBody
     public String toDetail(@PathVariable Long goodsId, User user, Model model
         ,HttpServletResponse response,HttpServletRequest request){
@@ -128,7 +128,7 @@ public class GoodsController {
         //将页面缓存到redis中
         if (!StringUtils.isEmpty(html)){
             //在redis中存入商品详情页并设置缓存时间未60秒
-            redisTemplate.opsForValue().set("goodsDetail",html,60,TimeUnit.SECONDS);
+            redisTemplate.opsForValue().set("goodsDetail"+goodsId,html,60,TimeUnit.SECONDS);
         }
         return html;
     }

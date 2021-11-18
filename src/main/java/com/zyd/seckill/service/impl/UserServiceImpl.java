@@ -54,10 +54,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         if(StringUtils.isBlank(mobile.trim()) || StringUtils.isBlank(password.trim())){
             //返回枚举类型
-            throw new GlobalException(RespBeanEnum.LOGIN_ERROR);
+            throw new  GlobalException(RespBeanEnum.LOGIN_ERROR);
         }
         if(!ValidatorUtil.isMobile(mobile)){
-            throw new GlobalException(RespBeanEnum.MOBILE_ERROR);
+            throw new  GlobalException(RespBeanEnum.MOBILE_ERROR);
         }
         //根据手机号获取用户
        User user = userService.getOne(new QueryWrapper<User>().eq("id", mobile));
@@ -82,18 +82,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         //设置session
         //request.getSession().setAttribute(ticket,user);
 
-        //如果redis中已存在该用户的cookie
-        User redisUser = (User) redisTemplate.opsForValue().get("user"+ticket);
-        if (null != redisUser.getId()){
-            return RespBean.success();
-        }else {
+
 
             //将用户信息存储redis
-            redisTemplate.opsForValue().set("user:" + ticket, user, 60, TimeUnit.MINUTES);
+            redisTemplate.opsForValue().set("user:" + ticket, user);
 
             //设置cookie
             CookieUtil.setCookie(request, response, "userTicket", ticket);
-        }
+
 
             return RespBean.success();
 
