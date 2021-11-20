@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>商品详情</title>
+    <!-- jquery -->
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <!-- bootstrap -->
+    <link rel="stylesheet" type="text/css"
+          href="/bootstrap/css/bootstrap.min.css"/>
+
+    <script type="text/javascript" src="/bootstrap/js/bootstrap.min.js">
+    </script>
+    <!-- layer -->
+    <script type="text/javascript" src="/layer/layer.js"></script>
+    <!-- common.js -->
+    <script type="text/javascript" src="/js/common.js"></script>
+</head>
+<body>
+<div class="panel panel-default">
+    <div class="panel-heading">秒杀商品详情</div>
+    <div class="panel-body">
+        <span id="userIip"> 您还没有登录，请<a href="/login/toLogin">登陆</a>后再操作<br/></span>
+        <span>没有收货地址的提示。。。</span>
+    </div>
+    <table class="table" id="goods">
+        <tr>
+            <td>商品名称</td>
+            <td colspan="3" id="goodsName"></td>
+        </tr>
+        <tr>
+            <td>商品图片</td>
+            <td colspan="3"><img id="goodsImg" width="200"
+                                 height="200"/></td>
+        </tr>
+        <tr>
+            <td>秒杀开始时间</td>
+            <td id="startDate"></td>
+            <!--<td th:text="${goods.startDate}"></td>-->
+            <td id="seckillTip">
+                <input type="hidden" id="remainSeconds"
+                       />
+                <!--<span th:if="${seckillStatus eq 0}">秒杀倒计时：<span
+                        id="countDown"
+
+                        th:text="${remainSeconds}"></span>秒</span>
+                <span th:if="${seckillStatus eq 1}">秒杀进行中</span>
+                <span th:if="${seckillStatus eq 2}">秒杀已结束</span>-->
+                <span id="seckillTip"></span>
+            </td>
+            <td>
+                <form id="seckillForm" method="post"
+                      action="/seckill/doSeckill">
+                    <button class="btn btn-primary btn-block" type="submit"
+                            id="buyButton">立即秒杀</button>
+                    <input type="hidden" name="goodsId" id="goodsId"/>
+                </form>
+            </td>
+        <tr>
+            <td>商品原价</td>
+            <td colspan="3" id="goodsPrice"></td>
+        </tr>
+        <tr>
+            <td>秒杀价</td>
+            <td colspan="3" id="seckillPrice" style="color: red"></td>
+        </tr>
+        <tr>
+            <td>库存数量</td>
+            <td colspan="3" id="stockCount" readonly="readonly"></td>
+
+        </tr>
+    </table>
+
+</div>
+<!--<p th:text="'hello:'+${user.nickname}"></p>-->
+</body>
+<script>
+    $(function(){
+        //countDown();
+        getDetails();
+    });
+
+    function getDetails() {
+        var goodsId = g_getQueryString("goodsId");
+        $.ajax({
+            url:'/goods/detail/'+goodsId,
+            type:'POST',
+            success:function (data) {
+                if(data.code==200){
+
+                    render(data.obj);
+                }else {
+
+                    layer.msg("数据异常1！"+data.code);
+                }
+            },
+            error:function (data) {
+                layer.msg("数据异常2！"+data.code);
+            }
+        });
+    }
+
+    function render(detail) {
+        var user=detail.user;
+        var goods=detail.goodsVo;
+        var remainSeconds=detail.reainSeconds;
+
+        if(user){
+            $("#userIip").hide();
+        }
+        $("#goodsId").val(goods.id);
+        $("#goodsImg").attr("src",goods.goodsImg);
+        $("#goodsName").text(goods.goodsName);
+        $("#goodsPrice").text(goods.goodsPrice);
+        $("#seckillPrice").text(goods.seckillPrice);
+        $("#stockCount").text(goods.stockCount);
+        $("#remainSeconds").val(remainSeconds);
+        $("#startDate").text(new Date(goods.startDate).format("yyyy-MM-dd HH:mm:ss"));
+        console.log(goods);
+        countDown();
+    }
+
+    function countDown(){
+        var remainSeconds = $("#remainSeconds").val();
+        var timeout;
+        //秒杀还没开始，倒计时
+        if(remainSeconds > 0){
+            $("#buyButton").attr("disabled", true);
+            timeout = setTimeout(function(){
+                $("#countDown").text(remainSeconds - 1);
+                $("#remainSeconds").val(remainSeconds - 1);
+                countDown();
+            },1000);
+            //秒杀进行中
+        }else if(remainSeconds == 0){
+            $("#buyButton").attr("disabled", false);
+            if(timeout){
+                clearTimeout(timeout);
+            }
+            $("#seckillTip").html("秒杀进行中");
+            //秒杀已经结束
+        }else{
+            $("#buyButton").attr("disabled", true);
+            $("#seckillTip").html("秒杀已经结束");
+        }
+    }
+</script>
+</html>

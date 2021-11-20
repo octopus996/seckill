@@ -3,7 +3,9 @@ package com.zyd.seckill.controller;
 import com.zyd.seckill.entity.User;
 import com.zyd.seckill.service.TGoodsService;
 import com.zyd.seckill.service.UserService;
+import com.zyd.seckill.vo.DetailVo;
 import com.zyd.seckill.vo.GoodsVo;
+import com.zyd.seckill.vo.RespBean;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.thymeleaf.context.WebContext;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
@@ -76,9 +79,9 @@ public class GoodsController {
         return html;
     }
 
-    @RequestMapping(value = "/toDetail/{goodsId}",produces = "text/html;charset=utf-8")
+    @RequestMapping(value = "/toDetail2/{goodsId}",produces = "text/html;charset=utf-8")
     @ResponseBody
-    public String toDetail(@PathVariable Long goodsId, User user, Model model
+    public String toDetail2(@PathVariable Long goodsId, User user, Model model
         ,HttpServletResponse response,HttpServletRequest request){
         //从redis中获取页面
         String html ;
@@ -131,5 +134,53 @@ public class GoodsController {
             redisTemplate.opsForValue().set("goodsDetail"+goodsId,html,60,TimeUnit.SECONDS);
         }
         return html;
+    }
+
+    @RequestMapping(value = "/detail/{goodsId}",produces = {"application/json"})
+    @ResponseBody
+    public RespBean toDetail(@PathVariable Long goodsId, User user, Model model){
+
+
+        //将redis获取的user传到前端
+        model.addAttribute("user",user);
+        //更具前台传来的商品id查询商品详情
+        GoodsVo goods=goodsService.findGoodsVoByGoodsId(goodsId);
+
+
+
+
+        //将商品详情传到前端
+        model.addAttribute("goods", goods);
+
+        Date startDate = goods.getStartDate();
+        Date endDate = goods.getEndDate();
+        Date nowDate = new Date();
+        //秒杀状态  1为开启 2为结束
+        int seckillStatus= 0;
+        //剩余开始时间
+        int remainSeconds= 0;
+        //秒杀还未开始
+        if (nowDate.before(startDate)){
+            remainSeconds= (int) ((startDate.getTime()-nowDate.getTime())/1000);
+            //秒杀已经结束
+        }else if (nowDate.after(endDate)){
+            seckillStatus=2;
+            remainSeconds=-1;
+            //秒杀开始
+        }else {
+            seckillStatus=1;
+            remainSeconds=0;
+        }
+        model.addAttribute("seckillStatus",seckillStatus);
+        model.addAttribute("remainSeconds",remainSeconds);
+
+        DetailVo detailVo = new DetailVo();
+        detailVo.setUser(user);
+        detailVo.setGoodsVo(goods);
+        detailVo.setSeckillStatus(seckillStatus);
+        detailVo.setRemainSeconds(remainSeconds);
+
+
+        return RespBean.success(detailVo);
     }
 }

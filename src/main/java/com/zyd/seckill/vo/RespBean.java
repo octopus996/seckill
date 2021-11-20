@@ -7,13 +7,53 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+
 public class RespBean {
     private long code;//状态码
     private String message;//消息
     private Object obj;
+
+    public RespBean() {
+    }
+
+    public RespBean(long code, String message, Object obj) {
+        this.code = code;
+        this.message = message;
+        this.obj = obj;
+    }
+
+    @Override
+    public String toString() {
+        return "RespBean{" +
+                "code=" + code +
+                ", message='" + message + '\'' +
+                ", obj=" + obj +
+                '}';
+    }
+
+    public long getCode() {
+        return code;
+    }
+
+    public void setCode(long code) {
+        this.code = code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Object getObj() {
+        return obj;
+    }
+
+    public void setObj(Object obj) {
+        this.obj = obj;
+    }
 
     /**
      * 成功的返回结果
