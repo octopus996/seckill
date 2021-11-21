@@ -140,17 +140,8 @@ public class GoodsController {
     @ResponseBody
     public RespBean toDetail(@PathVariable Long goodsId, User user, Model model){
 
-
-        //将redis获取的user传到前端
-        model.addAttribute("user",user);
-        //更具前台传来的商品id查询商品详情
+       //更具前台传来的商品id查询商品详情
         GoodsVo goods=goodsService.findGoodsVoByGoodsId(goodsId);
-
-
-
-
-        //将商品详情传到前端
-        model.addAttribute("goods", goods);
 
         Date startDate = goods.getStartDate();
         Date endDate = goods.getEndDate();
@@ -171,8 +162,7 @@ public class GoodsController {
             seckillStatus=1;
             remainSeconds=0;
         }
-        model.addAttribute("seckillStatus",seckillStatus);
-        model.addAttribute("remainSeconds",remainSeconds);
+
 
         DetailVo detailVo = new DetailVo();
         detailVo.setUser(user);
