@@ -8,12 +8,15 @@ import com.zyd.seckill.dao.TOrderMapper;
 import com.zyd.seckill.entity.TSeckillGoods;
 import com.zyd.seckill.entity.TSeckillOrder;
 import com.zyd.seckill.entity.User;
+import com.zyd.seckill.exception.GlobalException;
 import com.zyd.seckill.service.TGoodsService;
 import com.zyd.seckill.service.TOrderService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zyd.seckill.service.TSeckillGoodsService;
 import com.zyd.seckill.service.TSeckillOrderService;
 import com.zyd.seckill.vo.GoodsVo;
+import com.zyd.seckill.vo.OrderDetailVo;
+import com.zyd.seckill.vo.RespBeanEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -73,5 +76,22 @@ public class TOrderServiceImpl extends ServiceImpl<TOrderMapper, TOrder> impleme
 
 
         return order;
+    }
+
+    @Override
+    public OrderDetailVo getDetail(Long orderId) {
+        if (null == orderId){
+            throw new GlobalException(RespBeanEnum.ORDER_NOT_EXIST);
+        }
+        //获取订单信息
+        TOrder order = orderMapper.selectById(orderId);
+        //获取商品信息
+        GoodsVo goodsVo = goodsService.findGoodsVoByGoodsId(order.getGoodsId());
+        OrderDetailVo detailVo = new OrderDetailVo();
+        detailVo.setOrder(order);
+        detailVo.setGoodsVo(goodsVo);
+
+
+        return detailVo;
     }
 }

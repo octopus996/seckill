@@ -1,4 +1,4 @@
-/*
+
 
 package com.zyd.seckill.exception;
 
@@ -31,4 +31,4 @@ public class GlobalExceptionHandler {
 
 }
 
-*/
+

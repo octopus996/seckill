@@ -4,6 +4,7 @@ import com.zyd.seckill.entity.TOrder;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zyd.seckill.entity.User;
 import com.zyd.seckill.vo.GoodsVo;
+import com.zyd.seckill.vo.OrderDetailVo;
 
 /**
  * <p>
@@ -16,4 +17,7 @@ import com.zyd.seckill.vo.GoodsVo;
 public interface TOrderService extends IService<TOrder> {
 
     TOrder seckill(User user, GoodsVo goods);
+
+    OrderDetailVo getDetail(Long orderId);
+
 }

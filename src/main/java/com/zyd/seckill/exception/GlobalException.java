@@ -1,4 +1,4 @@
-/*
+
 package com.zyd.seckill.exception;
 
 import com.zyd.seckill.vo.RespBeanEnum;
@@ -12,4 +12,4 @@ import lombok.NoArgsConstructor;
 public class GlobalException extends RuntimeException{
     private RespBeanEnum respBeanEnum;
 }
-*/
+

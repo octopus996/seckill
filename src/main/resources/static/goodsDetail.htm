@@ -48,12 +48,15 @@
                 <span id="seckillTip"></span>
             </td>
             <td>
-                <form id="seckillForm" method="post"
+                <!--<form id="seckillForm" method="post"
                       action="/seckill/doSeckill">
                     <button class="btn btn-primary btn-block" type="submit"
                             id="buyButton">立即秒杀</button>
                     <input type="hidden" name="goodsId" id="goodsId"/>
-                </form>
+                </form>-->
+                <button class="btn btn-primary btn-block" type="submit"
+                        id="buyButton" onclick="doSeckill()">立即秒杀</button>
+                <input type="hidden" name="goodsId" id="goodsId"/>
             </td>
         <tr>
             <td>商品原价</td>
@@ -142,6 +145,26 @@
             $("#buyButton").attr("disabled", true);
             $("#seckillTip").html("秒杀已经结束");
         }
+    }
+    function doSeckill() {
+        $.ajax({
+            url:'/seckill/doSeckill',
+            datatype:'json',
+            type:'POST',
+            data:{
+                goodsId:$("#goodsId").val()
+            },
+            success:function (data) {
+                if(200 == data.code){
+                    window.location.href="/OrderDetail.htm?orderId="+data.obj.id
+                }else {
+                    layer.msg("goodsDetail数据异常1！"+data.message+data.code)
+                }
+            },
+            error:function () {
+                layer.msg("goodsDetail数据异常2！")
+            }
+        })
     }
 </script>
 </html>
