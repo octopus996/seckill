@@ -70,7 +70,6 @@
     })
     function getOrderDetail() {
         var orderId=g_getQueryString("orderId");
-        console.log(orderId)
         $.ajax({
             url:'/order/orderDetail',
             datatype:'json',
@@ -80,7 +79,7 @@
             },
             success:function (data) {
                 if(200 == data.code){
-
+                        render(data.obj)
                 }else {
                     layer.msg("OrderDetail数据异常1！"+data.message+data.code)
                 }
@@ -90,6 +89,27 @@
             }
 
         })
+    }
+    function render(detail) {
+        var order=detail.order;
+        var goods=detail.goodsVo;
+        $("#goodsName").text(goods.goodsName);
+        $("#goodsPrice").text(order.goodsPrice);
+        $("#goodsImg").attr("src",goods.goodsImg);
+        $("#createDate").text(new Date(order.createDate).format("yyyy-MM-dd HH:mm:ss"));
+        var status=order.orderStatus;
+        console.log(status)
+        var orderStatusText;
+
+        switch (status) {
+            case 0: orderStatusText="未支付";break;
+            case 1: orderStatusText="待发货";break;
+            case 2: orderStatusText="已发货";break;
+            case 3: orderStatusText="已收货";break;
+            case 4: orderStatusText="已退款";break;
+            case 5: orderStatusText="已完成";break;
+        }
+        $("#orderStutas").html(orderStatusText);
     }
 </script>
 </html>
