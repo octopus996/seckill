@@ -11,6 +11,7 @@ import com.zyd.seckill.vo.GoodsVo;
 import com.zyd.seckill.vo.RespBean;
 import com.zyd.seckill.vo.RespBeanEnum;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,7 +28,8 @@ public class SecKillController {
     private TSeckillOrderService seckillOrderService;
     @Autowired
     private TOrderService orderService;
-
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @RequestMapping("/doSeckill2")
     public String doSecKill2(Model model, User user, Long goodsId){
@@ -74,9 +76,10 @@ public class SecKillController {
             return RespBean.error(RespBeanEnum.EMPTY_STOCK);
         }
         //判断是重复抢购
-        TSeckillOrder seckillOrder = seckillOrderService.getOne(new QueryWrapper<TSeckillOrder>().eq("user_id", user.getId())
+        /*TSeckillOrder seckillOrder = seckillOrderService.getOne(new QueryWrapper<TSeckillOrder>().eq("user_id", user.getId())
                 .eq("goods_id", goodsId)
-        );
+        );*/
+        TSeckillOrder seckillOrder = (TSeckillOrder) redisTemplate.opsForValue().get("order:" + user.getId() + ":" + goods.getId());
         //判断不为空
         if (seckillOrder != null){
             return RespBean.error(RespBeanEnum.REPEATE_ERROR);

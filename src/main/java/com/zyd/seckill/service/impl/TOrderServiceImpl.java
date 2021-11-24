@@ -3,6 +3,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.zyd.seckill.entity.TOrder;
 import com.zyd.seckill.dao.TOrderMapper;
 import com.zyd.seckill.entity.TSeckillGoods;
@@ -18,6 +19,7 @@ import com.zyd.seckill.vo.GoodsVo;
 import com.zyd.seckill.vo.OrderDetailVo;
 import com.zyd.seckill.vo.RespBeanEnum;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 /**
@@ -39,7 +41,8 @@ public class TOrderServiceImpl extends ServiceImpl<TOrderMapper, TOrder> impleme
     private TSeckillOrderService seckillOrderService;
     @Autowired
     private TGoodsService goodsService;
-
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     public TOrder seckill(User user, GoodsVo goods) {
@@ -48,11 +51,16 @@ public class TOrderServiceImpl extends ServiceImpl<TOrderMapper, TOrder> impleme
         if (seckillGoods.getStockCount()>1){
             seckillGoods.setStockCount(seckillGoods.getStockCount()-1);
         }
-        seckillGoodsService.updateById(seckillGoods);
+        /*seckillGoodsService.updateById(seckillGoods);*/
         if(goods.getStockCount()>0){
             goods.setGoodsStock(goods.getGoodsStock()-1);
         }
         goodsService.updateById(goods);
+        boolean update = seckillGoodsService.update(new UpdateWrapper<TSeckillGoods>().setSql("stock_count=stock_count-1")
+                .eq("goods_id", goods.getId()).gt("stock_count", 0));
+        if (!update){
+            return null;
+        }
         //生成秒杀订单
         TOrder order = new TOrder();
 
@@ -73,7 +81,8 @@ public class TOrderServiceImpl extends ServiceImpl<TOrderMapper, TOrder> impleme
          seckillOrder.setOrderId(order.getId());
          seckillOrder.setGoodsId(goods.getId());
         seckillOrderService.save(seckillOrder);
-
+        //将秒杀订单存入redis
+        redisTemplate.opsForValue().set("order:" + user.getId() + ":" + goods.getId(),seckillOrder);
 
         return order;
     }
