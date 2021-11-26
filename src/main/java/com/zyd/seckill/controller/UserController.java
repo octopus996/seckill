@@ -21,9 +21,34 @@ public class UserController {
     }
 
 
-    @RequestMapping("/mq")
+    /*@RequestMapping("/mq")
     @ResponseBody
     public void mq(){
         mqSender.send("hello");
+    }*/
+
+    /**
+     * Fanou模式
+     */
+   /* @RequestMapping("/mq/fanout")
+    @ResponseBody
+    public void mq02(){
+        mqSender.send("hello");
+    }*/
+
+    /**
+     * Direct模式
+     *
+     */
+    @RequestMapping("/mq/direct01")
+    @ResponseBody
+    public void direct01(){
+        mqSender.send01("hello queue_direct01");
+    }
+
+    @RequestMapping("/mq/direct02")
+    @ResponseBody
+    public void direct02(){
+        mqSender.send02("hello queue_direct02");
     }
 }
