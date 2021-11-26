@@ -19,6 +19,8 @@ public class UserController {
     public RespBean info(User user){
         return RespBean.success();
     }
+
+
     @RequestMapping("/mq")
     @ResponseBody
     public void mq(){
