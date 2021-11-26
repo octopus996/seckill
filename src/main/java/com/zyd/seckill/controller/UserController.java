@@ -30,11 +30,11 @@ public class UserController {
     /**
      * Fanou模式
      */
-   /* @RequestMapping("/mq/fanout")
+    @RequestMapping("/mq/fanout")
     @ResponseBody
     public void mq02(){
         mqSender.send("hello");
-    }*/
+    }
 
     /**
      * Direct模式

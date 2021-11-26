@@ -18,7 +18,7 @@ public class MQReceiver {
      *
      * @param msg
      */
-    @RabbitListener(queues = "queue_fanout01")
+    /*@RabbitListener(queues = "queue_fanout01")
     public void  receive_fanout01(Object msg){
         log.info("QUEUE01接受消息:"+msg);
     }
@@ -26,7 +26,7 @@ public class MQReceiver {
     @RabbitListener(queues = "queue_fanout02")
     public void receive_fanout02(Object msg){
         log.info("QUEUE02接受消息:"+msg);
-    }
+    }*/
 
     /**
      * direct模式

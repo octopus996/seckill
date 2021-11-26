@@ -11,10 +11,10 @@ public class MQSender {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    /*public void send(Object msg){
+    public void send(Object msg){
         log.info("发送消息："+msg);
         rabbitTemplate.convertAndSend("fanoutExchang",null,msg);
-    }*/
+    }
 
     public void send01(Object msg){
         log.info("queue_direct01发送消息"+msg);
