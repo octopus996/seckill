@@ -1,3 +1,5 @@
+/*
+
 package com.zyd.seckill.config;
 
 import org.springframework.amqp.core.Binding;
@@ -39,3 +41,4 @@ public class RabbitMQTopticConfig {
     }
 
 }
+*/

@@ -66,4 +66,18 @@ public class UserController {
     public void topic02(){
         mqSender.send04("hello queue_topic02");
     }
+
+    /**
+     * headers模式
+     */
+    @RequestMapping("/mq/headers01")
+    @ResponseBody
+    public void headers01(){
+        mqSender.send05("两个都接受消息");
+    }
+    @RequestMapping("/mq/headers02")
+    @ResponseBody
+    public void headers02(){
+        mqSender.send06("queue01接受消息");
+    }
 }
