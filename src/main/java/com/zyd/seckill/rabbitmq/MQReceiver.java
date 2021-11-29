@@ -8,17 +8,17 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class MQReceiver {
 
-    /*@RabbitListener(queues = "queue")
+    @RabbitListener(queues = "queue")
     public void receive(Object msg){
         log.info("接受消息："+msg);
-    }*/
+    }
 
     /**
      * fanout模式
      *
      * @param msg
      */
-    /*@RabbitListener(queues = "queue_fanout01")
+    @RabbitListener(queues = "queue_fanout01")
     public void  receive_fanout01(Object msg){
         log.info("QUEUE01接受消息:"+msg);
     }
@@ -26,7 +26,7 @@ public class MQReceiver {
     @RabbitListener(queues = "queue_fanout02")
     public void receive_fanout02(Object msg){
         log.info("QUEUE02接受消息:"+msg);
-    }*/
+    }
 
     /**
      * direct模式
@@ -41,4 +41,19 @@ public class MQReceiver {
     public void receive_Direct02(Object msg){
         log.info("queue_direct02接受消息："+msg);
     }
+
+    /**
+     * Topic模式
+     *
+     * @param msg
+     */
+    @RabbitListener(queues = "queue_topic01")
+    public void receive_Topic01(Object msg){
+        log.info("queue_topic01接受消息:"+msg);
+    }
+    @RabbitListener(queues = "queue_topic02")
+    public void receive_Topic(Object msg){
+        log.info("queue_topic02接受消息:"+msg);
+    }
+
 }

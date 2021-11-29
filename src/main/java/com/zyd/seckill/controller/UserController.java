@@ -51,4 +51,19 @@ public class UserController {
     public void direct02(){
         mqSender.send02("hello queue_direct02");
     }
+
+    /**
+     * Topic 模式
+     */
+    @RequestMapping("/mq/topic01")
+    @ResponseBody
+    public void topic01(){
+        mqSender.send03("hello queue_topic01");
+    }
+
+    @RequestMapping("/mq/topic02")
+    @ResponseBody
+    public void topic02(){
+        mqSender.send04("hello queue_topic02");
+    }
 }

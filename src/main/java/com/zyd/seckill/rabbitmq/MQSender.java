@@ -13,15 +13,25 @@ public class MQSender {
 
     public void send(Object msg){
         log.info("发送消息："+msg);
-        rabbitTemplate.convertAndSend("fanoutExchang",null,msg);
+        rabbitTemplate.convertAndSend("fanoutExchang","",msg);
     }
 
     public void send01(Object msg){
         log.info("queue_direct01发送消息"+msg);
-        rabbitTemplate.convertAndSend("exchang_direct","routingkey01",msg);
+        rabbitTemplate.convertAndSend("exchang_direct","queue.red",msg);
     }
     public void send02(Object msg){
         log.info("queue_direct02发送消息"+msg);
-        rabbitTemplate.convertAndSend("exchang_direct","routingkey02",msg);
+        rabbitTemplate.convertAndSend("exchang_direct","queue.green",msg);
+    }
+
+    public void send03(Object msg){
+        log.info("queue_topic01发送消息:"+msg);
+        rabbitTemplate.convertAndSend("exchang_topic","queue.topic",msg);
+    }
+
+    public void send04(Object msg){
+        log.info("queue_topic02发送消息:"+msg);
+        rabbitTemplate.convertAndSend("exchang_topic","queue.queue.topic",msg);
     }
 }

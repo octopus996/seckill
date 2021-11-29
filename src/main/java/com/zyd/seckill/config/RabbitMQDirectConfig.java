@@ -15,8 +15,8 @@ public class RabbitMQDirectConfig {
     private static final String QUEUE_DIRECT01="queue_direct01";
     private static final String QUEUE_DIRECT02="queue_direct02";
     private static final String EXCHANG_DIRECT="exchang_direct";
-    private static final String ROUTINGKEY01="routingkey01";
-    private static final String ROUTINGKEY02="routingkey02";
+    private static final String ROUTINGKEY01="queue.red";
+    private static final String ROUTINGKEY02="queue.green";
 
     @Bean
     public Queue queue_direct01(){
