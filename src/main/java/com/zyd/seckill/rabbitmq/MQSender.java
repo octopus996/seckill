@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import javax.print.attribute.standard.PresentationDirection;
 import java.util.Properties;
 
 @Service
@@ -16,7 +17,7 @@ public class MQSender {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    public void send(Object msg){
+    /*public void send(Object msg){
         log.info("发送消息："+msg);
         rabbitTemplate.convertAndSend("fanoutExchang","",msg);
     }
@@ -57,5 +58,9 @@ public class MQSender {
         Message message=new Message(msg.getBytes(),properties);
         rabbitTemplate.convertAndSend("exchange_headers","",message);
 
+    }*/
+    public void sendSeckill(String message){
+        log.info("发送消息"+message);
+        rabbitTemplate.convertAndSend("seckillQueue","queue.message",message);
     }
 }
