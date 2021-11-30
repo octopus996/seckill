@@ -41,7 +41,7 @@ public class MQSender {
     }
 
     public void send05(String msg){
-        log.info("两个queue都发送消息:"+msg);
+        log.info("queue01发送消息:"+msg);
         MessageProperties properties=new MessageProperties();
         properties.setHeader("color","red");
         properties.setHeader("speed","quickly");
@@ -50,7 +50,7 @@ public class MQSender {
     }
 
     public void send06(String msg){
-        log.info("queue02发送消息:"+msg);
+        log.info("两个都发送消息:"+msg);
         MessageProperties properties=new MessageProperties();
         properties.setHeader("color","red");
         properties.setHeader("speed","low");
