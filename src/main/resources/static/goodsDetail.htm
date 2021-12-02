@@ -84,9 +84,11 @@
 
     function getDetails() {
         var goodsId = g_getQueryString("goodsId");
+
         $.ajax({
             url:'/goods/detail/'+goodsId,
-            type:'POST',
+            type:'GET',
+            datatype:'JSON',
             success:function (data) {
                 if(data.code==200){
 
@@ -150,19 +152,56 @@
         $.ajax({
             url:'/seckill/doSeckill',
             datatype:'json',
-            type:'POST',
+            type:'GET',
             data:{
                 goodsId:$("#goodsId").val()
             },
             success:function (data) {
                 if(200 == data.code){
-                    window.location.href="/OrderDetail.htm?orderId="+data.obj.id
+                    //window.location.href="/OrderDetail.htm?orderId="+data.obj.id
+                    getResult($("#goodsId").val())
                 }else {
                     layer.msg("goodsDetail数据异常1！"+data.message+data.code)
                 }
             },
             error:function () {
                 layer.msg("goodsDetail数据异常2！")
+            }
+        })
+    }
+    function getResult(goodsId) {
+        g_showLoading();
+        $.ajax({
+            url:'/seckill/getResult/',
+            datatype:'json',
+            type:'get',
+            data:{
+                goodsId:goodsId
+            },
+            success:function (data) {
+                if (data.code == 200){
+                    var result=data.obj
+
+                    console.log("result:"+result)
+
+                    if (result < 0){
+                        layer.msg("秒杀失败！")
+                    }else if (result > 0){
+                        layer.confirm("恭喜你秒杀成功！",{btn:["确定","取消"]},function () {
+                            window.location.href="orderDetail.htm?orderId="+result;
+                        },function () {
+                            layer.close();
+                        });
+
+                    }else{
+                        var i=1
+                        console.log("经过这里"+i+"次")
+                        setTimeout(function () {
+                            getResult(goodsId)
+                        },50)
+                    }
+
+                }
             }
         })
     }

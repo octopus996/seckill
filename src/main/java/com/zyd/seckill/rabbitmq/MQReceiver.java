@@ -97,16 +97,11 @@ public class MQReceiver {
         Long goodsId = seckillMessage.getGoodsId();
         User user = seckillMessage.getUser();
         GoodsVo goodsVo = goodsService.findGoodsVoByGoodsId(goodsId);
+        //判断库存
         if (goodsVo.getStockCount() < 1){
             return;
         }
-        //判断是否重复抢购
-        TSeckillOrder seckillOrder = (TSeckillOrder) redisTemplate.opsForValue()
-                .get("order:" + user.getId() + ":" + goodsId);
-        if (seckillOrder != null){
-            return ;
-        }
-        //下单操作
+
         orderService.seckill(user,goodsVo);
     }
 

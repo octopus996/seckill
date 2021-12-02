@@ -1,14 +1,11 @@
 package com.zyd.seckill.service.impl;
-import java.math.BigDecimal;
+
 import java.util.Date;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.zyd.seckill.entity.TOrder;
+import com.zyd.seckill.entity.*;
 import com.zyd.seckill.dao.TOrderMapper;
-import com.zyd.seckill.entity.TSeckillGoods;
-import com.zyd.seckill.entity.TSeckillOrder;
-import com.zyd.seckill.entity.User;
 import com.zyd.seckill.exception.GlobalException;
 import com.zyd.seckill.service.TGoodsService;
 import com.zyd.seckill.service.TOrderService;
@@ -17,6 +14,7 @@ import com.zyd.seckill.service.TSeckillGoodsService;
 import com.zyd.seckill.service.TSeckillOrderService;
 import com.zyd.seckill.vo.GoodsVo;
 import com.zyd.seckill.vo.OrderDetailVo;
+import com.zyd.seckill.vo.RespBean;
 import com.zyd.seckill.vo.RespBeanEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -48,43 +46,62 @@ public class TOrderServiceImpl extends ServiceImpl<TOrderMapper, TOrder> impleme
     public TOrder seckill(User user, GoodsVo goods) {
         //获取秒杀商品信息
         TSeckillGoods seckillGoods = seckillGoodsService.getOne(new QueryWrapper<TSeckillGoods>().eq("goods_id", goods.getId()));
-        if (seckillGoods.getStockCount()>1){
+        /*if (seckillGoods.getStockCount()>1){
             seckillGoods.setStockCount(seckillGoods.getStockCount()-1);
-        }
+        }*/
         /*seckillGoodsService.updateById(seckillGoods);*/
-        if(goods.getStockCount()>0){
+        /*if(goods.getStockCount()>0){
             goods.setGoodsStock(goods.getGoodsStock()-1);
-        }
-        goodsService.updateById(goods);
-        boolean update = seckillGoodsService.update(new UpdateWrapper<TSeckillGoods>().setSql("stock_count=stock_count-1")
-                .eq("goods_id", goods.getId()).gt("stock_count", 0));
-        if (!update){
+        }*/
+        //goodsService.updateById(goods);
+        //进行商品库存扣减
+        TOrder isExistOrderByGoodsId = orderMapper.selectOne(new QueryWrapper<TOrder>().eq("user_id", user.getId()).eq("goods_id", goods.getId()));
+        TSeckillOrder isExistSckillOrderByGoodsId = seckillOrderService.getOne(new QueryWrapper<TSeckillOrder>().eq("user_id", user.getId()).eq("goods_id", goods.getId()));
+        if (null != isExistOrderByGoodsId){
             return null;
         }
-        //生成秒杀订单
-        TOrder order = new TOrder();
+        if (null != isExistSckillOrderByGoodsId){
+            return null;
+        }
+        boolean goodsUpdate = goodsService.update(new UpdateWrapper<TGoods>().setSql("goods_stock=goods_stock-1")
+                .eq("id", goods.getId()).gt("goods_stock", 0));
+        if (!goodsUpdate){
+            return null;
+        }else {
+            //进行秒杀商品扣减
+            boolean seckillGoodsUpdate = seckillGoodsService.update(new UpdateWrapper<TSeckillGoods>().setSql("stock_count=stock_count-1")
+                    .eq("goods_id", goods.getId()).gt("stock_count", 0));
 
-        order.setOrderStatus(0);
-        order.setUserId(user.getId());
-        order.setGoodsId(goods.getId());
-        order.setDeliveryAddrId(0L);
-        order.setGoodsName(goods.getGoodsName());
-        order.setGoodsCount(goods.getStockCount());
-        order.setGoodsPrice(seckillGoods.getSeckillPrice());
-        order.setOrderChannel(0);
-        order.setCreateDate(new Date());
-        orderMapper.insert(order);
-        //生成秒杀订单
-         TSeckillOrder seckillOrder = new TSeckillOrder();
+            if (!seckillGoodsUpdate) {
+                redisTemplate.opsForValue().set("isStockEmpty" + goods.getId(), "0");
+                return null;
+            } else {
 
-         seckillOrder.setUserId(user.getId());
-         seckillOrder.setOrderId(order.getId());
-         seckillOrder.setGoodsId(goods.getId());
-        seckillOrderService.save(seckillOrder);
-        //将秒杀订单存入redis
-        redisTemplate.opsForValue().set("order:" + user.getId() + ":" + goods.getId(),seckillOrder);
+                //生成秒杀订单
+                TOrder order = new TOrder();
+                order.setOrderStatus(0);
+                order.setUserId(user.getId());
+                order.setGoodsId(goods.getId());
+                order.setDeliveryAddrId(0L);
+                order.setGoodsName(goods.getGoodsName());
+                order.setGoodsCount(goods.getStockCount());
+                order.setGoodsPrice(seckillGoods.getSeckillPrice());
+                order.setOrderChannel(0);
+                order.setCreateDate(new Date());
+                orderMapper.insert(order);
 
-        return order;
+                //生成秒杀订单
+                TSeckillOrder seckillOrder = new TSeckillOrder();
+                seckillOrder.setUserId(user.getId());
+                seckillOrder.setOrderId(order.getId());
+                seckillOrder.setGoodsId(goods.getId());
+                seckillOrderService.save(seckillOrder);
+                //将秒杀订单存入redis
+                redisTemplate.opsForValue().set("order:" + user.getId() + ":" + goods.getId(), seckillOrder);
+
+                return order;
+            }
+        }
     }
 
     @Override

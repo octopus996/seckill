@@ -41,21 +41,21 @@ public class SecKillController implements InitializingBean {
     @Autowired
     private RedisTemplate redisTemplate;
 
-    private Map<Long,Boolean> isStockEmpty=new HashMap<>();
+    private Map<Long, Boolean> isStockEmpty = new HashMap<>();
     @Autowired
     private MQSender mqSender;
 
     @RequestMapping("/doSeckill2")
-    public String doSecKill2(Model model, User user, Long goodsId){
+    public String doSecKill2(Model model, User user, Long goodsId) {
 
-        if (null == user){
+        if (null == user) {
             return "login";
         }
-        model.addAttribute("user",user);
+        model.addAttribute("user", user);
         //根据商品ID查找该商品
         GoodsVo goods = goodsService.findGoodsVoByGoodsId(goodsId);
         //判断库存
-        if (goods.getStockCount()<1){
+        if (goods.getStockCount() < 1) {
             model.addAttribute("errmsg", RespBeanEnum.EMPTY_STOCK.getMessage());
             return "seckllFail";
         }
@@ -64,22 +64,22 @@ public class SecKillController implements InitializingBean {
                 .eq("goods_id", goodsId)
         );
         //判断不为空
-        if (seckillOrder != null){
-            model.addAttribute("errmsg",RespBeanEnum.REPEATE_ERROR.getMessage());
+        if (seckillOrder != null) {
+            model.addAttribute("errmsg", RespBeanEnum.REPEATE_ERROR.getMessage());
             return "seckillFail";
         }
         //抢购
-        TOrder order =orderService.seckill(user,goods);
-        model.addAttribute("order",order);
-        model.addAttribute("goods",goods);
+        TOrder order = orderService.seckill(user, goods);
+        model.addAttribute("order", order);
+        model.addAttribute("goods", goods);
         return "OrderDetail";
     }
 
     @RequestMapping("/doSeckill")
     @ResponseBody
-    public RespBean doSecKill(User user, Long goodsId){
+    public RespBean doSecKill(User user, Long goodsId) {
 
-        if (null == user){
+        if (null == user) {
             return RespBean.error(RespBeanEnum.SESSION_ERROR);
         }
 
@@ -102,9 +102,9 @@ public class SecKillController implements InitializingBean {
         TOrder order =orderService.seckill(user,goods);
 
         return RespBean.success(order);*/
-        TSeckillOrder seckillOrder = (TSeckillOrder) redisTemplate.opsForValue().
-                get("order:" + user.getId() + ":" + goodsId);
-        if (seckillOrder != null){
+        TSeckillOrder orderSeckill = (TSeckillOrder) redisTemplate.opsForValue()
+                .get("order:" + user.getId() + ":" + goodsId);
+        if (null != orderSeckill) {
             return RespBean.error(RespBeanEnum.REPEATE_ERROR);
         }
         //内存标记，减少访问reids
@@ -112,33 +112,49 @@ public class SecKillController implements InitializingBean {
             return RespBean.error(RespBeanEnum.EMPTY_STOCK);
         }
         //从redis中取出该商品的库存，每运行一次减1
-        Long decrement = redisTemplate.opsForValue().decrement("seckillGoods:" + goodsId);
+        Long decrement = redisTemplate.opsForValue().decrement("stock" + goodsId);
         if (decrement < 1){
-            isStockEmpty.put(goodsId,true);
-            redisTemplate.opsForValue().increment("seckillGoods:"+goodsId);
+            redisTemplate.opsForValue().increment("stock"+goodsId);
             return RespBean.error(RespBeanEnum.EMPTY_STOCK);
         }
         SeckillMessage message = new SeckillMessage(user, goodsId);
+        //object转Json
         mqSender.sendSeckill(JsonUtil.objectToJson(message));
         //返回0 表示排队中
         return RespBean.success(0);
     }
 
     /**
+     * -1表示秒杀失败，0表示排队中，1表示秒杀成功
+     *
+     * @param user
+     * @param goodsId
+     * @return
+     */
+    @RequestMapping("/getResult")
+    @ResponseBody
+    public RespBean getResult(User user, Long goodsId){
+        if (null == user ){
+            return null;
+        }
+        Long seckillOrderId= seckillOrderService.getResult(user,goodsId);
+        return RespBean.success(seckillOrderId);
+    }
+
+    /**
      * 系统初始化，把商品库存放在redis中
+     *
      * @throws Exception
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        List<GoodsVo> list = goodsService.findGoodsVo();
-        if (CollectionUtils.isEmpty(list)){
+        List<GoodsVo> goodsVoList = goodsService.findGoodsVo();
+        if (CollectionUtils.isEmpty(goodsVoList)) {
             return;
         }
-        list.forEach(goodsVo -> {
-                    isStockEmpty.put(goodsVo.getId(),false);
-                    redisTemplate.opsForValue().set("seckillGoods:" + goodsVo.getId(), goodsVo.getStockCount());
-                }
-        );
-
+        for (GoodsVo goodsVo : goodsVoList) {
+            isStockEmpty.put(goodsVo.getId(),false);
+            redisTemplate.opsForValue().set("stock"+goodsVo.getId(),goodsVo.getStockCount());
+        }
     }
 }

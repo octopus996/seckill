@@ -1,3 +1,5 @@
+/*
+
 package com.zyd.seckill.config;
 
 import org.springframework.amqp.core.Binding;
@@ -46,3 +48,4 @@ public class RabbitMQHeadersConfig {
         return BindingBuilder.bind(queue02()).to(exchange()).whereAll(map).match();
     }
 }
+*/
