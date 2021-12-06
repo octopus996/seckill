@@ -154,7 +154,7 @@ public class SecKillController implements InitializingBean {
         }
         for (GoodsVo goodsVo : goodsVoList) {
             isStockEmpty.put(goodsVo.getId(),false);
-            redisTemplate.opsForValue().set("stock"+goodsVo.getId(),goodsVo.getStockCount());
+            redisTemplate.opsForValue().set("stock:"+goodsVo.getId(),goodsVo.getStockCount());
         }
     }
 }
