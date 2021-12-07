@@ -24,11 +24,13 @@ class SeckillApplicationTests {
     @Test
     public void testLock(){
         String value = UUIDUtil.randomUUID().toString();
-        Boolean isLock = redisTemplate.opsForValue().setIfAbsent("k1", value, 5, TimeUnit.SECONDS);
+        Boolean isLock = redisTemplate.opsForValue().setIfAbsent("k1", value, 120, TimeUnit.SECONDS);
         if (isLock){
             redisTemplate.opsForValue().set("name","nameValue");
-            System.out.println("name"+redisTemplate.opsForValue().get("name"));
-            System.out.println("k1"+redisTemplate.opsForValue().get("k1"));
+            String name = (String) redisTemplate.opsForValue().get("name");
+            System.out.println("name:"+name);
+            System.out.println(redisTemplate.opsForValue().get("k1"));
+            //Integer.parseInt("nameValue");
             Boolean result = (Boolean) redisTemplate.execute(redisScript, Collections.singletonList("k1"), value);
             System.out.println(result);
         }else{
