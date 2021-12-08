@@ -17,6 +17,7 @@ import com.zyd.seckill.vo.RespBeanEnum;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +46,8 @@ public class SecKillController implements InitializingBean {
     private Map<Long, Boolean> isStockEmpty = new HashMap<>();
     @Autowired
     private MQSender mqSender;
+    @Autowired
+    private RedisScript<Long> redisScript;
 
     @RequestMapping("/doSeckill2")
     public String doSecKill2(Model model, User user, Long goodsId) {
@@ -112,9 +116,12 @@ public class SecKillController implements InitializingBean {
             return RespBean.error(RespBeanEnum.EMPTY_STOCK);
         }
         //从redis中取出该商品的库存，每运行一次减1
-        Long decrement = redisTemplate.opsForValue().decrement("stock" + goodsId);
-        if (decrement < 1){
-            redisTemplate.opsForValue().increment("stock"+goodsId);
+//        Long decrement = redisTemplate.opsForValue().decrement("stock" + goodsId);
+        Long decrement = (Long) redisTemplate.execute(redisScript, Collections.singletonList("stock:" + goodsId),Collections.EMPTY_LIST);
+
+        if (decrement < 0){
+            isStockEmpty.put(goodsId,true);
+            redisTemplate.opsForValue().increment("stock:"+goodsId);
             return RespBean.error(RespBeanEnum.EMPTY_STOCK);
         }
         SeckillMessage message = new SeckillMessage(user, goodsId);

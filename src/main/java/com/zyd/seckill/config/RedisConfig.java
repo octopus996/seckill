@@ -32,10 +32,10 @@ public class RedisConfig {
 
     }
     @Bean
-    public DefaultRedisScript<Boolean> script(){
-        DefaultRedisScript<Boolean> redisScript = new DefaultRedisScript<>();
-        redisScript.setLocation(new ClassPathResource("lock.lua"));
-        redisScript.setResultType(Boolean.class);
+    public DefaultRedisScript<Long> script(){
+        DefaultRedisScript<Long> redisScript = new DefaultRedisScript<>();
+        redisScript.setLocation(new ClassPathResource("stock.lua"));
+        redisScript.setResultType(Long.class);
         return redisScript;
     }
 }
