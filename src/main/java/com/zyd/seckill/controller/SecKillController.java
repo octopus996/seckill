@@ -121,7 +121,7 @@ public class SecKillController implements InitializingBean {
 
         if (decrement < 0){
             isStockEmpty.put(goodsId,true);
-            redisTemplate.opsForValue().increment("stock:"+goodsId);
+           // redisTemplate.opsForValue().increment("stock:"+goodsId);
             return RespBean.error(RespBeanEnum.EMPTY_STOCK);
         }
         SeckillMessage message = new SeckillMessage(user, goodsId);
