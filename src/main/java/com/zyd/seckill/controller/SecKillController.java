@@ -11,9 +11,12 @@ import com.zyd.seckill.service.TGoodsService;
 import com.zyd.seckill.service.TOrderService;
 import com.zyd.seckill.service.TSeckillOrderService;
 import com.zyd.seckill.utils.JsonUtil;
+import com.zyd.seckill.utils.MD5;
+import com.zyd.seckill.utils.UUIDUtil;
 import com.zyd.seckill.vo.GoodsVo;
 import com.zyd.seckill.vo.RespBean;
 import com.zyd.seckill.vo.RespBeanEnum;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -79,11 +82,11 @@ public class SecKillController implements InitializingBean {
         return "OrderDetail";
     }
 
-    @RequestMapping("/doSeckill")
+    @RequestMapping("/{path}/doSeckill")
     @ResponseBody
-    public RespBean doSecKill(User user, Long goodsId) {
+    public RespBean doSecKill(@PathVariable String path,User user, Long goodsId) {
 
-        if (null == user) {
+        if (null == user || goodsId<0 || StringUtils.isEmpty(path)) {
             return RespBean.error(RespBeanEnum.SESSION_ERROR);
         }
 
@@ -146,6 +149,13 @@ public class SecKillController implements InitializingBean {
         }
         Long seckillOrderId= seckillOrderService.getResult(user,goodsId);
         return RespBean.success(seckillOrderId);
+    }
+
+    @RequestMapping("/path")
+    @ResponseBody
+    public RespBean path(Long goodsId,User user){
+        String path= MD5.md5(UUIDUtil.randomUUID()+user.getId()+goodsId);
+        return RespBean.success(path);
     }
 
     /**

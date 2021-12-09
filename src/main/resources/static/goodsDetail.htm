@@ -55,7 +55,7 @@
                     <input type="hidden" name="goodsId" id="goodsId"/>
                 </form>-->
                 <button class="btn btn-primary btn-block" type="submit"
-                        id="buyButton" onclick="doSeckill()">立即秒杀</button>
+                        id="buyButton" onclick="getSeckill()">立即秒杀</button>
                 <input type="hidden" name="goodsId" id="goodsId"/>
             </td>
         <tr>
@@ -148,13 +148,14 @@
             $("#seckillTip").html("秒杀已经结束");
         }
     }
-    function doSeckill() {
+    function doSeckill(path) {
         $.ajax({
-            url:'/seckill/doSeckill',
+            url:'/seckill/'+path+'/doSeckill',
             datatype:'json',
-            type:'GET',
+            type:'POST',
             data:{
-                goodsId:$("#goodsId").val()
+                goodsId:$("#goodsId").val(),
+
             },
             success:function (data) {
                 if(200 == data.code){
@@ -177,6 +178,7 @@
             type:'get',
             data:{
                 goodsId:goodsId
+
             },
             success:function (data) {
                 if (data.code == 200){
@@ -203,6 +205,29 @@
                     }
 
                 }
+            }
+        })
+    }
+    function getSeckill() {
+        g_showLoading()
+        var goodsId=$("#goodsId").val()
+        $.ajax({
+            url:'/seckill/path',
+            datatype:'json',
+            type:'post',
+            data:{
+                goodsId:goodsId
+            },
+            success:function (data) {
+                if (data.code == 200 ){
+                    doSeckill(data.obj)
+                    console.log(data.obj)
+                }else {
+                    layer.msg("getSeckill"+data.code)
+                }
+            },
+            error:function () {
+                layer.msg("getSeckill ajax 失败")
             }
         })
     }
