@@ -20,4 +20,5 @@ public interface TOrderService extends IService<TOrder> {
 
     OrderDetailVo getDetail(Long orderId);
 
+    Boolean checkCaptcha(User user, Long goodsId, String captcha);
 }

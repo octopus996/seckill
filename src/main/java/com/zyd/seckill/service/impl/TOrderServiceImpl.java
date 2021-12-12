@@ -16,6 +16,7 @@ import com.zyd.seckill.vo.GoodsVo;
 import com.zyd.seckill.vo.OrderDetailVo;
 import com.zyd.seckill.vo.RespBean;
 import com.zyd.seckill.vo.RespBeanEnum;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -119,5 +120,16 @@ public class TOrderServiceImpl extends ServiceImpl<TOrderMapper, TOrder> impleme
 
 
         return detailVo;
+    }
+
+    @Override
+    public Boolean checkCaptcha(User user, Long goodsId, String captcha) {
+        if (null == user || goodsId < 0 || StringUtils.isEmpty(captcha)){
+            return false;
+        }
+        //获取正确的验证码答案
+        String realCaptcha = (String) redisTemplate.opsForValue().get("captcha:" + user.getId() + ":" + goodsId);
+
+        return realCaptcha.equals(captcha)?true:false;
     }
 }

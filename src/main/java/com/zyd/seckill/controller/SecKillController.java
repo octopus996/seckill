@@ -2,10 +2,12 @@ package com.zyd.seckill.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.rabbitmq.tools.json.JSONUtil;
+import com.wf.captcha.ArithmeticCaptcha;
 import com.zyd.seckill.entity.SeckillMessage;
 import com.zyd.seckill.entity.TOrder;
 import com.zyd.seckill.entity.TSeckillOrder;
 import com.zyd.seckill.entity.User;
+import com.zyd.seckill.exception.GlobalException;
 import com.zyd.seckill.rabbitmq.MQSender;
 import com.zyd.seckill.service.TGoodsService;
 import com.zyd.seckill.service.TOrderService;
@@ -16,6 +18,7 @@ import com.zyd.seckill.utils.UUIDUtil;
 import com.zyd.seckill.vo.GoodsVo;
 import com.zyd.seckill.vo.RespBean;
 import com.zyd.seckill.vo.RespBeanEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +31,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Controller
 @RequestMapping("/seckill")
 public class SecKillController implements InitializingBean {
@@ -153,9 +159,36 @@ public class SecKillController implements InitializingBean {
 
     @RequestMapping("/path")
     @ResponseBody
-    public RespBean path(Long goodsId,User user){
+    public RespBean path(Long goodsId,User user,String captcha){
+        if (null == user || goodsId < 0 || StringUtils.isEmpty(captcha)){
+            return RespBean.error(RespBeanEnum.SESSION_ERROR);
+        }
+        Boolean check=orderService.checkCaptcha(user,goodsId,captcha);
+        if (!check){
+            return RespBean.error(RespBeanEnum.CHECK_CAPTCHA_ERROR);
+        }
         String path= MD5.md5(UUIDUtil.randomUUID()+user.getId()+goodsId);
+
         return RespBean.success(path);
+    }
+
+    @RequestMapping("/captcha")
+    public void verifyCode(User user, Long goodsId, HttpServletResponse response){
+        if (null == user){
+            throw new GlobalException(RespBeanEnum.SESSION_ERROR);
+        }
+        //设置请求头为输出图片类型
+        response.setContentType("image/gif");
+        response.setHeader("Pragma", "No-cache");
+        response.setHeader("Cache-Control", "no-cache");
+        response.setDateHeader("Expires", 0);
+        ArithmeticCaptcha captcha = new ArithmeticCaptcha(130, 32, 3);
+        redisTemplate.opsForValue().set("captcha:"+user.getId()+":"+goodsId,captcha.text());
+        try {
+            captcha.out(response.getOutputStream());
+        } catch (IOException e) {
+            log.error("验证码生成失败！",e.getMessage());
+        }
     }
 
     /**

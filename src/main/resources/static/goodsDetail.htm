@@ -54,9 +54,15 @@
                             id="buyButton">立即秒杀</button>
                     <input type="hidden" name="goodsId" id="goodsId"/>
                 </form>-->
-                <button class="btn btn-primary btn-block" type="submit"
-                        id="buyButton" onclick="getSeckill()">立即秒杀</button>
-                <input type="hidden" name="goodsId" id="goodsId"/>
+                <div>
+                    <div>
+                        <img id="captchaImg" width="130" height="32" onclick="refreshCaptcha()" style="display: none">
+                        <input id="captcha" style="display: none">
+                        <button class="btn btn-primary btn-block" type="submit"
+                                id="buyButton" onclick="getSeckill()">立即秒杀</button>
+                        <input type="hidden" name="goodsId" id="goodsId"/>
+                    </div>
+                </div>
             </td>
         <tr>
             <td>商品原价</td>
@@ -81,7 +87,10 @@
         //countDown();
         getDetails();
     });
-
+    function refreshCaptcha() {
+        var goodsId=$("#goodsId").val();
+        $("#captchaImg").attr("src","/seckill/captcha?goodsId="+goodsId+"&Time="+new Date());
+    }
     function getDetails() {
         var goodsId = g_getQueryString("goodsId");
 
@@ -142,10 +151,15 @@
                 clearTimeout(timeout);
             }
             $("#seckillTip").html("秒杀进行中");
+            $("#captchaImg").attr("src","/seckill/captcha?goodsId="+$("#goodsId").val()+"&Time="+new Date());
+            $("#captchaImg").show();
+            $("#captcha").show();
             //秒杀已经结束
         }else{
             $("#buyButton").attr("disabled", true);
             $("#seckillTip").html("秒杀已经结束");
+            $("#captchaImg").hide();
+            $("#captcha").hide();
         }
     }
     function doSeckill(path) {
@@ -155,6 +169,7 @@
             type:'POST',
             data:{
                 goodsId:$("#goodsId").val(),
+
 
             },
             success:function (data) {
@@ -216,7 +231,8 @@
             datatype:'json',
             type:'post',
             data:{
-                goodsId:goodsId
+                goodsId:goodsId,
+                captcha:$("#captcha").val()
             },
             success:function (data) {
                 if (data.code == 200 ){
