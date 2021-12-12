@@ -31,12 +31,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Controller
@@ -159,9 +161,18 @@ public class SecKillController implements InitializingBean {
 
     @RequestMapping("/path")
     @ResponseBody
-    public RespBean path(Long goodsId,User user,String captcha){
+    public RespBean path(Long goodsId, User user, String captcha, HttpServletRequest request  ){
         if (null == user || goodsId < 0 || StringUtils.isEmpty(captcha)){
             return RespBean.error(RespBeanEnum.SESSION_ERROR);
+        }
+        StringBuffer url = request.getRequestURL();
+        Integer count = (Integer) redisTemplate.opsForValue().get(url + ":" + user.getId());
+        if (null == count){
+            redisTemplate.opsForValue().set(url+":"+user.getId(),1,5, TimeUnit.SECONDS);
+        }else if (count < 5){
+            redisTemplate.opsForValue().increment(url+":"+user.getId());
+        }else {
+            return RespBean.error(RespBeanEnum.ACCESS_LIMIT_REQUEST);
         }
         Boolean check=orderService.checkCaptcha(user,goodsId,captcha);
         if (!check){

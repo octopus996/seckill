@@ -22,8 +22,10 @@ public enum RespBeanEnum {
     EMPTY_STOCK(500500,"库存不足"),
     REPEATE_ERROR(500501,"该商品限购一个"),
     CHECK_CAPTCHA_ERROR(500502,"验证码错误，请重新输入！"),
+    ACCESS_LIMIT_REQUEST(500503,"操作太频繁啦，请稍后再试！"),
 
     ORDER_NOT_EXIST(500300, "订单不存在");
+
 
     private final Integer code;//状态码
     private final String message;//消息
