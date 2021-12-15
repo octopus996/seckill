@@ -3,6 +3,7 @@ package com.zyd.seckill.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.rabbitmq.tools.json.JSONUtil;
 import com.wf.captcha.ArithmeticCaptcha;
+import com.zyd.seckill.config.AccessLimit;
 import com.zyd.seckill.entity.SeckillMessage;
 import com.zyd.seckill.entity.TOrder;
 import com.zyd.seckill.entity.TSeckillOrder;
@@ -159,21 +160,15 @@ public class SecKillController implements InitializingBean {
         return RespBean.success(seckillOrderId);
     }
 
+
+    @AccessLimit(second = 5,maxCount=5 ,needLogin=true)
     @RequestMapping("/path")
     @ResponseBody
     public RespBean path(Long goodsId, User user, String captcha, HttpServletRequest request  ){
         if (null == user || goodsId < 0 || StringUtils.isEmpty(captcha)){
             return RespBean.error(RespBeanEnum.SESSION_ERROR);
         }
-        StringBuffer url = request.getRequestURL();
-        Integer count = (Integer) redisTemplate.opsForValue().get(url + ":" + user.getId());
-        if (null == count){
-            redisTemplate.opsForValue().set(url+":"+user.getId(),1,5, TimeUnit.SECONDS);
-        }else if (count < 5){
-            redisTemplate.opsForValue().increment(url+":"+user.getId());
-        }else {
-            return RespBean.error(RespBeanEnum.ACCESS_LIMIT_REQUEST);
-        }
+        //核查验证码是否正确
         Boolean check=orderService.checkCaptcha(user,goodsId,captcha);
         if (!check){
             return RespBean.error(RespBeanEnum.CHECK_CAPTCHA_ERROR);
